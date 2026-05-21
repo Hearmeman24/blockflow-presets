@@ -16,7 +16,7 @@
       ],
       "disk_size_estimate_gb": 65,
       "gpu_tier_hint": "recommended",
-      "preset_url": "https://raw.githubusercontent.com/Hearmeman24/blockflow-presets/main/registry/qwen-image-lighting/preset.json"
+      "preset_url": "http://127.0.0.1:59756/registry/qwen-image-lighting/preset.json"
     }
   ]
 }

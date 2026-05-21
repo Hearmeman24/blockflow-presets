@@ -113,6 +113,17 @@ def main() -> int:
         action="store_true",
         help="HEAD-check every model URL for reachability (slow; CI use).",
     )
+    parser.add_argument(
+        "--only",
+        action="append",
+        default=[],
+        metavar="PRESET_ID",
+        help=(
+            "Restrict validation to one or more preset IDs (repeatable). "
+            "Used by CI to validate just the preset(s) a PR touched, "
+            "instead of the whole registry."
+        ),
+    )
     args = parser.parse_args()
 
     if not SCHEMA_PATH.exists():
@@ -121,7 +132,22 @@ def main() -> int:
     schema = json.loads(SCHEMA_PATH.read_text())
 
     preset_paths = sorted(REGISTRY_DIR.glob("*/preset.json"))
+    if args.only:
+        wanted = set(args.only)
+        preset_paths = [p for p in preset_paths if p.parent.name in wanted]
+        missing = wanted - {p.parent.name for p in preset_paths}
+        if missing:
+            print(
+                f"--only specified {sorted(missing)} but no matching preset(s) found "
+                f"under {REGISTRY_DIR}",
+                file=sys.stderr,
+            )
+            return 2
+
     if not preset_paths:
+        if args.only:
+            print("nothing to validate after --only filter; exiting OK", flush=True)
+            return 0
         print(f"no presets found under {REGISTRY_DIR}", file=sys.stderr)
         return 2
 

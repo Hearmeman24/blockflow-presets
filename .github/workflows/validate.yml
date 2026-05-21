@@ -1,13 +1,106 @@
 name: validate
 
+# Trigger philosophy:
+#   - Anything that touches a `registry/*/preset.json` / `workflow.json`,
+#     the JSON schema, `manifest.json`, or the validator tools → CI runs.
+#   - Docs, license, .gitignore, README edits → skip CI entirely (waste of
+#     runner time + the live-install job is GPU-cost-bearing).
 on:
   push:
     branches: [main]
+    paths:
+      - 'registry/**'
+      - 'schema/**'
+      - 'tools/**'
+      - 'manifest.json'
+      - '.github/workflows/validate.yml'
   pull_request:
+    paths:
+      - 'registry/**'
+      - 'schema/**'
+      - 'tools/**'
+      - 'manifest.json'
+      - '.github/workflows/validate.yml'
+  # Manual trigger for the live-install job (which spins up a real RunPod
+  # endpoint and costs GPU minutes — opt-in only).
+  workflow_dispatch:
+    inputs:
+      preset_id:
+        description: 'Preset ID to live-install (e.g. qwen-image-lighting)'
+        required: true
+        type: string
 
 jobs:
-  schema:
-    name: Schema + size-sum checks (fast)
+  # ---------------------------------------------------------------------------
+  # detect-changes — figure out WHICH preset directories were touched.
+  # Downstream jobs use this output to scope themselves; the goal is to
+  # validate only the preset(s) a PR actually changes, not the whole registry.
+  # ---------------------------------------------------------------------------
+  detect-changes:
+    name: Detect changed presets
+    runs-on: ubuntu-latest
+    outputs:
+      preset_ids: ${{ steps.scan.outputs.preset_ids }}
+      schema_or_tools_changed: ${{ steps.scan.outputs.schema_or_tools_changed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # need history for `git diff` against base
+
+      - id: scan
+        name: Scan changed files
+        run: |
+          set -euo pipefail
+
+          # Resolve the base ref to diff against.
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base="origin/${{ github.event.pull_request.base.ref }}"
+          else
+            base="${{ github.event.before }}"
+          fi
+
+          # On a first push (force-push, fresh branch, etc.) `before` is all-zeros.
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+            base="HEAD~1"
+            git rev-parse --verify "$base" >/dev/null 2>&1 || base="HEAD"
+          fi
+
+          echo "Diffing against: $base"
+          changed="$(git diff --name-only "$base" HEAD || true)"
+          echo "--- changed files ---"
+          echo "$changed"
+          echo "---------------------"
+
+          # Preset dirs that have a present preset.json (added/modified, not deleted)
+          preset_ids="$(echo "$changed" \
+            | grep -E '^registry/[^/]+/' \
+            | awk -F/ '{print $2}' \
+            | sort -u \
+            | while read -r id; do
+                if [ -f "registry/$id/preset.json" ]; then
+                  echo "$id"
+                fi
+              done \
+            | paste -sd ' ' -)"
+
+          schema_or_tools="false"
+          if echo "$changed" | grep -qE '^(schema/|tools/|manifest\.json)'; then
+            schema_or_tools="true"
+          fi
+
+          echo "preset_ids='${preset_ids}'"
+          echo "schema_or_tools_changed='${schema_or_tools}'"
+          echo "preset_ids=${preset_ids}" >> "$GITHUB_OUTPUT"
+          echo "schema_or_tools_changed=${schema_or_tools}" >> "$GITHUB_OUTPUT"
+
+  # ---------------------------------------------------------------------------
+  # schema-and-sizes — fast checks, no network. Always runs.
+  # Validates the WHOLE registry against the schema (the cost is microseconds)
+  # but scopes URL checks to only the changed presets.
+  # ---------------------------------------------------------------------------
+  schema-and-sizes:
+    name: Schema + sizes
+    needs: detect-changes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,18 +112,21 @@ jobs:
       - name: Install jsonschema
         run: pip install jsonschema
 
-      - name: Validate registry
+      - name: Validate registry (schema + size-sum)
         run: python tools/validate.py
 
       - name: Verify manifest.json is up-to-date
         run: python tools/build_manifest.py --check
 
-  urls:
-    name: URL reachability (slow)
+  # ---------------------------------------------------------------------------
+  # url-check — HEAD-checks every model URL referenced by CHANGED presets.
+  # Skips when only schema/tools/manifest changed (those don't carry URLs).
+  # ---------------------------------------------------------------------------
+  url-check:
+    name: URL reachability (changed presets)
+    needs: detect-changes
+    if: needs.detect-changes.outputs.preset_ids != ''
     runs-on: ubuntu-latest
-    # URL checks are bandwidth-sensitive — only run on main branch + nightly.
-    # PRs get the fast schema check above; URLs validated when merging to main.
-    if: github.ref == 'refs/heads/main' || github.event_name == 'schedule'
     steps:
       - uses: actions/checkout@v4
 
@@ -41,5 +137,52 @@ jobs:
       - name: Install jsonschema
         run: pip install jsonschema
 
-      - name: Validate registry (with URL checks)
-        run: python tools/validate.py --check-urls
+      - name: HEAD-check URLs for changed presets
+        run: |
+          set -euo pipefail
+          ids="${{ needs.detect-changes.outputs.preset_ids }}"
+          only_flags=""
+          for id in $ids; do
+            only_flags="$only_flags --only $id"
+          done
+          echo "Running: python tools/validate.py --check-urls $only_flags"
+          python tools/validate.py --check-urls $only_flags
+
+  # ---------------------------------------------------------------------------
+  # live-install — provisions a real RunPod ComfyGen endpoint, installs the
+  # preset, runs the workflow, tears down. ~\$1 per run.
+  #
+  # MANUAL-ONLY (workflow_dispatch). Not wired into PR/push triggers because
+  # arbitrary PRs from external contributors shouldn't be able to spin up
+  # GPU resources on the repo's credit balance — maintainer reviews the PR,
+  # then triggers the live-install job with the preset ID as input.
+  # ---------------------------------------------------------------------------
+  live-install:
+    name: Live install + smoke (manual)
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    # Requires GitHub Actions secrets:
+    #   RUNPOD_API_KEY        — the maintainer's RunPod credit pool
+    #   PRESET_TEST_S3_ACCESS — read/write S3 creds for ComfyGen output
+    #   PRESET_TEST_S3_SECRET
+    #   PRESET_TEST_S3_BUCKET
+    #   PRESET_TEST_S3_REGION
+    # The smoke script (in BlockFlow's repo: tools/live_smoke_full_e2e.py)
+    # serves as the reference for what this job runs.
+    env:
+      PRESET_ID: ${{ github.event.inputs.preset_id }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sanity check the requested preset exists
+        run: |
+          test -f "registry/${PRESET_ID}/preset.json" \
+            || (echo "::error::No preset.json at registry/${PRESET_ID}/preset.json"; exit 1)
+
+      - name: Stub
+        run: |
+          echo "::warning::The live-install job is wired but the actual smoke runner is currently a stub."
+          echo "The reference smoke lives in the BlockFlow repo at tools/live_smoke_full_e2e.py."
+          echo "Productionizing it as a self-contained CI step requires the workflow secrets above"
+          echo "and a public installable comfy-gen pip package + ComfyGen worker image."
+          echo "Until then, the maintainer runs the smoke locally before merging new-preset PRs."
