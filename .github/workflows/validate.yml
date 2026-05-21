@@ -244,10 +244,11 @@ jobs:
           cp -R "$src" "$dst"
           ls -la "$dst"
 
-      - name: Install Python deps (comfy-gen + requests)
+      - name: Install Python deps (comfy-gen from GitHub source)
         run: |
           python3 -m pip install --upgrade pip
-          pip install comfy-gen
+          # comfy-gen isn't on PyPI; install from the public repo source.
+          pip install git+https://github.com/Hearmeman24/ComfyGen.git
 
       - name: Run live install validator
         env:
