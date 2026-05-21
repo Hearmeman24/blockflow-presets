@@ -229,10 +229,13 @@ def run_comfy_gen(args: list[str], *, label: str, timeout: int) -> dict:
         bufsize=1,  # line-buffered
     )
 
-    # Stream stderr live in a background thread; collect into a buffer for
-    # the post-mortem if the process exits non-zero.
+    # Stream stderr live in a background thread; collect stdout in another.
+    # We CANNOT use proc.communicate() alongside a manual stderr pump — once
+    # the pump closes proc.stderr at EOF, communicate's own read on that fd
+    # raises EBADF. Pump both pipes, then proc.wait().
     import threading
     stderr_lines: list[str] = []
+    stdout_chunks: list[str] = []
 
     def _pump_stderr():
         assert proc.stderr is not None
@@ -242,19 +245,30 @@ def run_comfy_gen(args: list[str], *, label: str, timeout: int) -> dict:
             sys.stderr.flush()
         proc.stderr.close()
 
-    t = threading.Thread(target=_pump_stderr, daemon=True)
-    t.start()
+    def _pump_stdout():
+        assert proc.stdout is not None
+        for line in iter(proc.stdout.readline, ""):
+            stdout_chunks.append(line)
+        proc.stdout.close()
+
+    t_err = threading.Thread(target=_pump_stderr, daemon=True)
+    t_out = threading.Thread(target=_pump_stdout, daemon=True)
+    t_err.start()
+    t_out.start()
 
     try:
-        stdout, _ = proc.communicate(timeout=timeout)
+        proc.wait(timeout=timeout)
     except subprocess.TimeoutExpired:
         proc.kill()
-        proc.communicate()
-        t.join(timeout=5)
+        proc.wait()
+        t_err.join(timeout=5)
+        t_out.join(timeout=5)
         log(f"{label} TIMED OUT after {timeout}s")
         raise RuntimeError(f"{label} timed out after {timeout}s")
 
-    t.join(timeout=5)
+    t_err.join(timeout=5)
+    t_out.join(timeout=5)
+    stdout = "".join(stdout_chunks)
 
     if proc.returncode != 0:
         log(f"{label} FAILED (exit {proc.returncode})")
