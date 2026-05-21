@@ -1,0 +1,43 @@
+{
+  "id": "qwen-image-lighting",
+  "name": "Qwen Image 2512 — Lightning 4-step",
+  "description": "Qwen Image 2512 (December 2025 update) with Lightning 4-step distillation. State-of-the-art text rendering + photorealism in 4 sampling steps. ~52GB of model files on the volume; recommended/performance GPU tier (the BF16 UNet alone is 41GB, so 32GB cards won't fit it fully resident).",
+  "comfygen_min_version": "0.2.0",
+  "tags": ["t2i", "qwen", "qwen-image", "qwen-image-2512", "lightning", "4-step"],
+  "workflow": {
+    "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/qwen-image-lighting/workflow.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "models": [
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_2512_bf16.safetensors",
+      "dest": "diffusion_models/qwen_image_2512_bf16.safetensors",
+      "size_gb": 40.9
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors",
+      "dest": "text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors",
+      "size_gb": 9.38
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/qwen_image_vae.safetensors",
+      "dest": "vae/qwen_image_vae.safetensors",
+      "size_gb": 0.254
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/lightx2v/Qwen-Image-2512-Lightning/resolve/main/Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors",
+      "dest": "loras/Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors",
+      "size_gb": 1.7
+    }
+  ],
+  "disk_size_estimate_gb": 65,
+  "tested_against": {
+    "comfygen_version": "0.2.0",
+    "gpu_tier": "recommended",
+    "note": "Workflow stacks the 4-step Lightning LoRA twice (UNet + CLIP branches). BF16 base needs the recommended tier or above."
+  }
+}

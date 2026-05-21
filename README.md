@@ -46,12 +46,11 @@ See [`schema/preset.schema.json`](schema/preset.schema.json) for the full schema
 
 ## Starter presets
 
-| ID | What | Tier |
-|---|---|---|
-| `sdxl-turbo` | SDXL Turbo portrait test (4-step inference, ~30s) | Budget |
-| `wan22-t2v` | Wan 2.2 MoE 14B text-to-video | Recommended |
+| ID | What | Tier | Disk |
+|---|---|---|---|
+| `qwen-image-lighting` | Qwen Image 2512 + 4-step Lightning distillation. State-of-the-art text rendering + photorealism in 4 sampling steps. | Recommended | ~65 GB |
 
-More to come — Wan 2.2 I2V, LTX-2.3, Z-Image Turbo. See [`registry/`](registry/) for the current set.
+Future additions will land via PRs from contributors using the [preset proposal issue template](https://github.com/Hearmeman24/BlockFlow/issues/new?template=preset_proposal.md).
 
 ## License
 
