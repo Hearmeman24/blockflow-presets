@@ -1,0 +1,22 @@
+{
+  "manifest_version": 1,
+  "presets": [
+    {
+      "id": "qwen-image-lighting",
+      "name": "Qwen Image 2512 \u2014 Lightning 4-step",
+      "description": "Qwen Image 2512 (December 2025 update) with Lightning 4-step distillation. State-of-the-art text rendering + photorealism in 4 sampling steps. ~52GB of model files on the volume; recommended/performance GPU tier (the BF16 UNet alone is 41GB, so 32GB cards won't fit it fully resident).",
+      "comfygen_min_version": "0.2.0",
+      "tags": [
+        "t2i",
+        "qwen",
+        "qwen-image",
+        "qwen-image-2512",
+        "lightning",
+        "4-step"
+      ],
+      "disk_size_estimate_gb": 65,
+      "gpu_tier_hint": "recommended",
+      "preset_url": "https://raw.githubusercontent.com/Hearmeman24/blockflow-presets/main/registry/qwen-image-lighting/preset.json"
+    }
+  ]
+}
