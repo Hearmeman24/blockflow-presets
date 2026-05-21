@@ -1,0 +1,49 @@
+{
+  "id": "wan22-t2v",
+  "name": "Wan 2.2 — Text to Video",
+  "description": "Wan 2.2 MoE 14B text-to-video. 4-step distill + LoRA-stacked base. Multi-GPU capable on RunPod recommended/performance tiers. Frames must satisfy 4n+1 (81/121/161).",
+  "comfygen_min_version": "0.2.0",
+  "tags": ["t2v", "wan", "wan-2.2", "video", "moe-14b"],
+  "workflow": {
+    "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/wan22-t2v/workflow.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "models": [
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_t2v_high_noise_14B_fp8_scaled.safetensors",
+      "dest": "diffusion_models/wan2.2_t2v_high_noise_14B_fp8_scaled.safetensors",
+      "size_gb": 16.4
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_t2v_low_noise_14B_fp8_scaled.safetensors",
+      "dest": "diffusion_models/wan2.2_t2v_low_noise_14B_fp8_scaled.safetensors",
+      "size_gb": 16.4
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "dest": "text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "size_gb": 11.4
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors",
+      "dest": "vae/wan_2.1_vae.safetensors",
+      "size_gb": 0.3
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Lightx2v/lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank64_bf16.safetensors",
+      "dest": "loras/lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank64_bf16.safetensors",
+      "size_gb": 1.2
+    }
+  ],
+  "disk_size_estimate_gb": 55,
+  "tested_against": {
+    "comfygen_version": "0.2.0",
+    "gpu_tier": "recommended",
+    "note": "Tested with 81-frame output at 480p on RTX PRO 6000 + A100 SXM. ~4-5min wall-clock per generation."
+  }
+}

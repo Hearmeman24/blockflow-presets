@@ -1,0 +1,25 @@
+{
+  "id": "z-image-turbo",
+  "name": "Z-Image Turbo",
+  "description": "Z-Image Turbo — fast single-GPU T2I with strong photorealism on small budgets. Diffusers-based, ~8 steps. Good fit for budget tier.",
+  "comfygen_min_version": "0.2.0",
+  "tags": ["t2i", "z-image", "turbo"],
+  "workflow": {
+    "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/z-image-turbo/workflow.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "models": [
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo/resolve/main/transformer/diffusion_pytorch_model.safetensors",
+      "dest": "diffusion_models/z-image-turbo.safetensors",
+      "size_gb": 12.0
+    }
+  ],
+  "disk_size_estimate_gb": 15,
+  "tested_against": {
+    "comfygen_version": "0.2.0",
+    "gpu_tier": "budget",
+    "note": "8-step inference on RTX 5090 (32GB), ~10-15s per image after model warm."
+  }
+}

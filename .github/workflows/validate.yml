@@ -1,0 +1,42 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  schema:
+    name: Schema + size-sum checks (fast)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install jsonschema
+        run: pip install jsonschema
+
+      - name: Validate registry
+        run: python tools/validate.py
+
+  urls:
+    name: URL reachability (slow)
+    runs-on: ubuntu-latest
+    # URL checks are bandwidth-sensitive — only run on main branch + nightly.
+    # PRs get the fast schema check above; URLs validated when merging to main.
+    if: github.ref == 'refs/heads/main' || github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install jsonschema
+        run: pip install jsonschema
+
+      - name: Validate registry (with URL checks)
+        run: python tools/validate.py --check-urls
