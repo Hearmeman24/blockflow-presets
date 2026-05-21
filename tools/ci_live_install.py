@@ -207,23 +207,65 @@ def build_batch_spec(preset: dict) -> list[dict]:
 
 
 def run_comfy_gen(args: list[str], *, label: str, timeout: int) -> dict:
-    """Invoke `comfy-gen ...` and parse JSON stdout. Raises on non-zero exit."""
+    """Invoke `comfy-gen ...` and parse JSON stdout. Streams stderr to our own
+    stderr in real time so CI logs show progress (comfy-gen writes progress
+    polls to stderr every ~3-5s).
+
+    Why streaming matters: GitHub Actions / CI runners buffer subprocess
+    output until the process exits when using subprocess.run(capture_output=True).
+    For a 14+ min download, that means the CI log shows NOTHING for 14 min
+    and then a dump of everything. Mid-run failures look indistinguishable
+    from a hang. Streaming stderr live as the worker progresses fixes that.
+
+    stdout is still captured (comfy-gen's contract is JSON-only on stdout;
+    we need the full body to parse). Raises on non-zero exit.
+    """
     log(f"{label}: comfy-gen {' '.join(args[:3])}...")
-    proc = subprocess.run(
+    proc = subprocess.Popen(
         ["comfy-gen", *args],
-        capture_output=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
         text=True,
-        timeout=timeout,
+        bufsize=1,  # line-buffered
     )
+
+    # Stream stderr live in a background thread; collect into a buffer for
+    # the post-mortem if the process exits non-zero.
+    import threading
+    stderr_lines: list[str] = []
+
+    def _pump_stderr():
+        assert proc.stderr is not None
+        for line in iter(proc.stderr.readline, ""):
+            stderr_lines.append(line)
+            sys.stderr.write(f"  [{label}] {line}")
+            sys.stderr.flush()
+        proc.stderr.close()
+
+    t = threading.Thread(target=_pump_stderr, daemon=True)
+    t.start()
+
+    try:
+        stdout, _ = proc.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        proc.communicate()
+        t.join(timeout=5)
+        log(f"{label} TIMED OUT after {timeout}s")
+        raise RuntimeError(f"{label} timed out after {timeout}s")
+
+    t.join(timeout=5)
+
     if proc.returncode != 0:
         log(f"{label} FAILED (exit {proc.returncode})")
-        log(f"  stderr (tail 2000): {proc.stderr[-2000:]}")
-        log(f"  stdout (tail 1000): {proc.stdout[-1000:]}")
+        full_stderr = "".join(stderr_lines)
+        log(f"  stderr (tail 2000): {full_stderr[-2000:]}")
+        log(f"  stdout (tail 1000): {stdout[-1000:]}")
         raise RuntimeError(f"{label} failed: exit {proc.returncode}")
     try:
-        return json.loads(proc.stdout)
+        return json.loads(stdout)
     except json.JSONDecodeError as exc:
-        log(f"{label}: stdout not valid JSON: {proc.stdout[:500]}")
+        log(f"{label}: stdout not valid JSON: {stdout[:500]}")
         raise RuntimeError(f"{label}: non-JSON stdout") from exc
 
 

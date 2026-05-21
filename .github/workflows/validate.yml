@@ -186,7 +186,11 @@ jobs:
        github.event.action == 'labeled' &&
        github.event.label.name == 'validate-live') ||
       github.event_name == 'workflow_dispatch'
-    timeout-minutes: 40
+    # 60 min ceiling — observed: GH-hosted runners' worker-to-HuggingFace
+    # bandwidth runs ~50-60% of a local network's, so a 14-min local download
+    # of the Qwen preset (52GB) stretches to 25-35 min in CI. 60 min keeps a
+    # safety margin without leaving the job pinned overnight if something hangs.
+    timeout-minutes: 60
     steps:
       - name: Check out BASE branch (trusted runner script + tools)
         uses: actions/checkout@v4
