@@ -1,36 +1,47 @@
 {
   "id": "qwen-image-lighting",
-  "name": "Qwen Image 2512 — Lightning 4-step",
+  "name": "Qwen Image 2512 \u2014 Lightning 4-step",
   "description": "Qwen Image 2512 (December 2025 update) with Lightning 4-step distillation. State-of-the-art text rendering + photorealism in 4 sampling steps. ~52GB of model files on the volume; recommended/performance GPU tier (the BF16 UNet alone is 41GB, so 32GB cards won't fit it fully resident).",
   "comfygen_min_version": "0.2.0",
-  "tags": ["t2i", "qwen", "qwen-image", "qwen-image-2512", "lightning", "4-step"],
+  "tags": [
+    "t2i",
+    "qwen",
+    "qwen-image",
+    "qwen-image-2512",
+    "lightning",
+    "4-step"
+  ],
   "workflow": {
     "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/qwen-image-lighting/workflow.json",
-    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    "sha256": "585a678e0651d54e215a571fb91ed79c94d4bfc14bcc705492ecfc2755714cd1"
   },
   "models": [
     {
       "source": "huggingface",
       "url": "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_2512_bf16.safetensors",
       "dest": "diffusion_models/qwen_image_2512_bf16.safetensors",
+      "sha256": "cbf55390fff27dbc785046d7007b04e0c5dd7421e7ef128f2831eacb53a8e075",
       "size_gb": 40.9
     },
     {
       "source": "huggingface",
       "url": "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors",
       "dest": "text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors",
+      "sha256": "cb5636d852a0ea6a9075ab1bef496c0db7aef13c02350571e388aea959c5c0b4",
       "size_gb": 9.38
     },
     {
       "source": "huggingface",
       "url": "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/qwen_image_vae.safetensors",
       "dest": "vae/qwen_image_vae.safetensors",
+      "sha256": "a70580f0213e67967ee9c95f05bb400e8fb08307e017a924bf3441223e023d1f",
       "size_gb": 0.254
     },
     {
       "source": "huggingface",
       "url": "https://huggingface.co/lightx2v/Qwen-Image-2512-Lightning/resolve/main/Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors",
       "dest": "loras/Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors",
+      "sha256": "ad12117461cb41e2ea637fec8df6392ce8e8550c47fbe2b829ed3deb98262066",
       "size_gb": 1.7
     }
   ],

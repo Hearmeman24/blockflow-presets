@@ -64,7 +64,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["source", "url", "dest", "size_gb"],
+        "required": ["source", "url", "dest", "sha256", "size_gb"],
         "properties": {
           "source": {
             "type": "string",
@@ -84,7 +84,7 @@
           "sha256": {
             "type": "string",
             "pattern": "^[a-f0-9]{64}$",
-            "description": "Optional but strongly recommended. If present, installer verifies the file matches before continuing."
+            "description": "REQUIRED. SHA256 hash of the file (hex, lowercase). ComfyGen's worker uses this for content-addressable dedup — if the file already exists at the destination with this hash, the download is skipped (cached: true). For HuggingFace LFS files, fetch via the API: GET /api/models/<repo>/tree/<branch>?recursive=1 returns lfs.oid per file."
           },
           "size_gb": {
             "type": "number",
