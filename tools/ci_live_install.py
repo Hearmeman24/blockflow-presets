@@ -100,19 +100,30 @@ def delete_network_volume(api_key: str, volume_id: str) -> None:
     _http_json("DELETE", f"{REST_BASE}/networkvolumes/{volume_id}", api_key)
 
 
+def _gql_escape(s: str) -> str:
+    """Escape a string for inline GraphQL embedding."""
+    return s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+
+
 def create_template(api_key: str, *, name: str, env: dict[str, str]) -> dict:
+    """Create a template via the GraphQL saveTemplate mutation.
+
+    Mirrors sgs-ui's backend.runpod_api.create_template: dockerArgs is a
+    required String! per the schema, even if empty."""
     env_pairs = ", ".join(
-        f'{{ key: "{k}", value: "{v}" }}' for k, v in env.items()
+        f'{{ key: "{_gql_escape(k)}", value: "{_gql_escape(v)}" }}'
+        for k, v in env.items()
     )
     mutation = f"""
     mutation {{
       saveTemplate(input: {{
-        name: "{name}",
-        imageName: "{BASE_DOCKER_IMAGE}",
-        isServerless: true,
-        env: [{env_pairs}],
-        volumeInGb: 0,
+        name: "{_gql_escape(name)}"
+        imageName: "{BASE_DOCKER_IMAGE}"
+        dockerArgs: ""
         containerDiskInGb: 5
+        volumeInGb: 0
+        isServerless: true
+        env: [{env_pairs}]
       }}) {{
         id
         name
