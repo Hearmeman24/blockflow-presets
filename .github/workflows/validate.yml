@@ -75,13 +75,15 @@ jobs:
           echo "$changed"
           echo "---------------------"
 
-          # Preset dirs that have a present preset.json (added/modified, not deleted)
+          # Preset dirs that have a present preset.json (added/modified, not deleted).
+          # `grep` returning no matches must NOT kill the pipeline (we expect 0
+          # changed presets on docs-only / workflow-only commits).
           preset_ids="$(echo "$changed" \
-            | grep -E '^registry/[^/]+/' \
+            | { grep -E '^registry/[^/]+/' || true; } \
             | awk -F/ '{print $2}' \
             | sort -u \
             | while read -r id; do
-                if [ -f "registry/$id/preset.json" ]; then
+                if [ -n "$id" ] && [ -f "registry/$id/preset.json" ]; then
                   echo "$id"
                 fi
               done \
@@ -214,7 +216,7 @@ jobs:
             changed="$(cd pr-checkout && git diff --name-only "$base" "$head" 2>/dev/null \
               || git diff --name-only "origin/${{ github.event.pull_request.base.ref }}" HEAD)"
             preset_id="$(echo "$changed" \
-              | grep -E '^registry/[^/]+/' \
+              | { grep -E '^registry/[^/]+/' || true; } \
               | awk -F/ '{print $2}' \
               | sort -u \
               | head -1)"
