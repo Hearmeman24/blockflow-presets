@@ -21,8 +21,12 @@ on:
       - 'tools/**'
       - 'manifest.json'
       - '.github/workflows/validate.yml'
-  # Manual trigger for the live-install job (which spins up a real RunPod
-  # endpoint and costs GPU minutes — opt-in only).
+  # Live-install job triggers:
+  #   - pull_request_target with the `validate-live` label (maintainer adds
+  #     after reviewing the preset.json + workflow.json)
+  #   - manual workflow_dispatch with explicit preset_id
+  pull_request_target:
+    types: [labeled]
   workflow_dispatch:
     inputs:
       preset_id:
@@ -149,40 +153,106 @@ jobs:
           python tools/validate.py --check-urls $only_flags
 
   # ---------------------------------------------------------------------------
-  # live-install — provisions a real RunPod ComfyGen endpoint, installs the
-  # preset, runs the workflow, tears down. ~\$1 per run.
+  # live-install — full provision → install → generate → teardown for a single
+  # preset against real RunPod. ~\$1 per run, ~20 min wall-clock.
   #
-  # MANUAL-ONLY (workflow_dispatch). Not wired into PR/push triggers because
-  # arbitrary PRs from external contributors shouldn't be able to spin up
-  # GPU resources on the repo's credit balance — maintainer reviews the PR,
-  # then triggers the live-install job with the preset ID as input.
+  # Trigger model: maintainer-only, via the `validate-live` label on a PR.
+  # External contributors can open a PR adding a preset; the cheap schema +
+  # URL jobs (above) run automatically. The maintainer reviews + adds the
+  # `validate-live` label when they want to burn credit on the live test.
+  #
+  # Secrets (set under Settings → Secrets and variables → Actions):
+  #   RUNPOD_API_KEY              — credit-bearing RunPod key
+  #   PRESET_TEST_S3_ACCESS       — AWS / R2 access key (ComfyGen writes outputs here)
+  #   PRESET_TEST_S3_SECRET
+  #   PRESET_TEST_S3_BUCKET
+  #   PRESET_TEST_S3_REGION       — eu-west-2, auto, etc.
+  #   PRESET_TEST_S3_ENDPOINT_URL — empty for AWS, set for R2-compatibles
+  #
+  # Trust model: pull_request_target gives the workflow access to secrets and
+  # checks out the BASE branch's code by default. We explicitly check out the
+  # PR's data files (preset.json / workflow.json) but run the BASE branch's
+  # tools/ci_live_install.py — so a malicious PR can't modify the runner script
+  # to exfiltrate secrets. The PR's data still needs maintainer review before
+  # the `validate-live` label is added.
   # ---------------------------------------------------------------------------
   live-install:
-    name: Live install + smoke (manual)
-    if: github.event_name == 'workflow_dispatch'
+    name: Live install + smoke
     runs-on: ubuntu-latest
-    # Requires GitHub Actions secrets:
-    #   RUNPOD_API_KEY        — the maintainer's RunPod credit pool
-    #   PRESET_TEST_S3_ACCESS — read/write S3 creds for ComfyGen output
-    #   PRESET_TEST_S3_SECRET
-    #   PRESET_TEST_S3_BUCKET
-    #   PRESET_TEST_S3_REGION
-    # The smoke script (in BlockFlow's repo: tools/live_smoke_full_e2e.py)
-    # serves as the reference for what this job runs.
-    env:
-      PRESET_ID: ${{ github.event.inputs.preset_id }}
+    if: >
+      (github.event_name == 'pull_request_target' &&
+       github.event.action == 'labeled' &&
+       github.event.label.name == 'validate-live') ||
+      github.event_name == 'workflow_dispatch'
+    timeout-minutes: 40
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out BASE branch (trusted runner script + tools)
+        uses: actions/checkout@v4
 
-      - name: Sanity check the requested preset exists
-        run: |
-          test -f "registry/${PRESET_ID}/preset.json" \
-            || (echo "::error::No preset.json at registry/${PRESET_ID}/preset.json"; exit 1)
+      - name: Check out PR HEAD for preset data only
+        if: github.event_name == 'pull_request_target'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          # Drop into a sibling dir so it can't overwrite the trusted tools/
+          path: pr-checkout
+          fetch-depth: 1
 
-      - name: Stub
+      - name: Resolve preset_id (from PR diff or workflow_dispatch input)
+        id: resolve
         run: |
-          echo "::warning::The live-install job is wired but the actual smoke runner is currently a stub."
-          echo "The reference smoke lives in the BlockFlow repo at tools/live_smoke_full_e2e.py."
-          echo "Productionizing it as a self-contained CI step requires the workflow secrets above"
-          echo "and a public installable comfy-gen pip package + ComfyGen worker image."
-          echo "Until then, the maintainer runs the smoke locally before merging new-preset PRs."
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            preset_id="${{ github.event.inputs.preset_id }}"
+          else
+            # Label trigger on a PR — compute the changed preset(s) ourselves
+            # since we don't depend on the detect-changes job here.
+            base="${{ github.event.pull_request.base.sha }}"
+            head="${{ github.event.pull_request.head.sha }}"
+            # Make sure both commits are local
+            git -C pr-checkout fetch origin "$base" --depth 1 || true
+            changed="$(cd pr-checkout && git diff --name-only "$base" "$head" 2>/dev/null \
+              || git diff --name-only "origin/${{ github.event.pull_request.base.ref }}" HEAD)"
+            preset_id="$(echo "$changed" \
+              | grep -E '^registry/[^/]+/' \
+              | awk -F/ '{print $2}' \
+              | sort -u \
+              | head -1)"
+          fi
+          if [ -z "$preset_id" ]; then
+            echo "::error::no preset_id resolved (no changed presets in PR?)"
+            exit 1
+          fi
+          echo "preset_id=$preset_id" >> "$GITHUB_OUTPUT"
+          echo "Live-installing preset: $preset_id"
+
+      - name: Stage PR's preset data into the base checkout
+        if: github.event_name == 'pull_request_target'
+        env:
+          PRESET_ID: ${{ steps.resolve.outputs.preset_id }}
+        run: |
+          set -euo pipefail
+          src="pr-checkout/registry/$PRESET_ID"
+          dst="registry/$PRESET_ID"
+          if [ ! -d "$src" ]; then
+            echo "::error::PR doesn't contain registry/$PRESET_ID/"
+            exit 1
+          fi
+          rm -rf "$dst"
+          cp -R "$src" "$dst"
+          ls -la "$dst"
+
+      - name: Install Python deps (comfy-gen + requests)
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install comfy-gen
+
+      - name: Run live install validator
+        env:
+          RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+          PRESET_TEST_S3_ACCESS: ${{ secrets.PRESET_TEST_S3_ACCESS }}
+          PRESET_TEST_S3_SECRET: ${{ secrets.PRESET_TEST_S3_SECRET }}
+          PRESET_TEST_S3_BUCKET: ${{ secrets.PRESET_TEST_S3_BUCKET }}
+          PRESET_TEST_S3_REGION: ${{ secrets.PRESET_TEST_S3_REGION }}
+          PRESET_TEST_S3_ENDPOINT_URL: ${{ secrets.PRESET_TEST_S3_ENDPOINT_URL }}
+        run: python3 tools/ci_live_install.py "${{ steps.resolve.outputs.preset_id }}"
