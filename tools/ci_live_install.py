@@ -292,12 +292,20 @@ def configure_comfy_gen_cli() -> None:
     log(f"wrote {config_path}")
 
 
-def head_check(url: str) -> int:
-    """HEAD a URL, return the status code. Used to verify the output URL
-    that the workflow generated actually serves an image."""
-    req = urllib.request.Request(url, method="HEAD")
+def reachability_check(url: str) -> int:
+    """Verify a URL serves an object — return HTTP status. Used on the
+    presigned output URL from a workflow run.
+
+    Why GET-with-Range instead of HEAD: AWS S3 presigned URLs sign the
+    HTTP method into the canonical request. A URL signed for GetObject
+    returns 403 SignatureDoesNotMatch on HEAD, even from the same client
+    seconds later. GET with `Range: bytes=0-0` is cheap (1 byte) and works
+    against any presigned URL that the workflow can hand back.
+    """
+    req = urllib.request.Request(url, method="GET", headers={"Range": "bytes=0-0"})
     try:
         with urllib.request.urlopen(req, timeout=15) as resp:
+            # Accept 206 Partial Content (Range honored) as well as 200.
             return resp.status
     except urllib.error.HTTPError as e:
         return e.code
@@ -402,11 +410,12 @@ def main() -> int:
             raise RuntimeError(f"no output URL in result: {result}")
         log(f"  output URL: {output_url}")
 
-        # === Verify: HEAD the output URL ===
-        status = head_check(output_url)
-        if status != 200:
+        # === Verify: GET-with-Range the output URL ===
+        # HEAD fails on AWS S3 presigned URLs signed for GET (403 SigDoesNotMatch).
+        status = reachability_check(output_url)
+        if status not in (200, 206):
             raise RuntimeError(f"output URL returned HTTP {status}")
-        log(f"  HEAD {output_url[:80]}... → HTTP 200 ✓")
+        log(f"  GET (range) {output_url[:80]}... → HTTP {status} ✓")
 
         elapsed = int(time.time() - overall_start)
         log(f"PRESET '{preset_id}' VALIDATED in {elapsed}s")
