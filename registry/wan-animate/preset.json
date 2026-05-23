@@ -17,7 +17,23 @@
     {
       "name": "Keep Background",
       "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/wan-animate/workflow_keep_background.json",
-      "sha256": "b4663315789a0460f4d4029424333ea2d894f8219ef5aaba5db72f360ac962b1"
+      "sha256": "b4663315789a0460f4d4029424333ea2d894f8219ef5aaba5db72f360ac962b1",
+      "smoke_inputs": [
+        {
+          "node_id": "311",
+          "field": "image",
+          "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/wan-animate/fixtures/sample_character.png",
+          "sha256": "26c57076e981e3254dcb66fbee69cee3f6793f14540c471003031db9428b8476",
+          "filename": "sample_character.png"
+        },
+        {
+          "node_id": "417",
+          "field": "video",
+          "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/wan-animate/fixtures/sample_motion.mp4",
+          "sha256": "2c53c833185054160e2dc1ad884d2d168eb9a95cbb89bc1dfe0eaef840100724",
+          "filename": "sample_motion.mp4"
+        }
+      ]
     },
     {
       "name": "Replace Character",

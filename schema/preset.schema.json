@@ -54,7 +54,40 @@
             "description": "Inline ComfyUI workflow in API format (node-id-keyed). Mutually exclusive with url+sha256."
           },
           "url": {"type": "string", "format": "uri", "description": "HTTPS URL of the workflow JSON. Pinned to a release tag. Mutually exclusive with json."},
-          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$", "description": "SHA256 of the workflow JSON for integrity. Required with url."}
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$", "description": "SHA256 of the workflow JSON for integrity. Required with url."},
+          "smoke_inputs": {
+            "type": "array",
+            "description": "Optional fixture inputs for ComfyGen's CI smoke gate. Each entry patches one input field on a specific node before the smoke-test submit. Workflows with no file inputs (pure prompt-driven, e.g. T2I) omit this field. BlockFlow's installer ignores this field; it's consumed by the smoke gate only.",
+            "items": {
+              "type": "object",
+              "required": ["node_id", "field", "url", "sha256", "filename"],
+              "properties": {
+                "node_id": {
+                  "type": "string",
+                  "description": "Node ID in the workflow whose input should be patched (e.g. '311' for a LoadImage node, '417' for VHS_LoadVideo)."
+                },
+                "field": {
+                  "type": "string",
+                  "description": "Input field name on the target node — typically 'image', 'video', 'audio', or 'mask'."
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "HTTPS URL of the fixture file. By convention lives under registry/<id>/fixtures/."
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$",
+                  "description": "SHA256 of the fixture file for integrity."
+                },
+                "filename": {
+                  "type": "string",
+                  "description": "Local filename the smoke gate writes to before submission. Matches the node's expected basename convention."
+                }
+              },
+              "additionalProperties": false
+            }
+          }
         },
         "oneOf": [
           {"required": ["json"], "not": {"required": ["url"]}},
