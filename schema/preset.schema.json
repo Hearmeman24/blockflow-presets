@@ -4,7 +4,7 @@
   "title": "BlockFlow Preset",
   "description": "A self-contained recipe BlockFlow's preset installer can apply to a ComfyGen endpoint. One JSON file per preset.",
   "type": "object",
-  "required": ["id", "name", "comfygen_min_version", "workflow", "models", "disk_size_estimate_gb"],
+  "required": ["id", "name", "comfygen_min_version", "workflows", "models", "disk_size_estimate_gb"],
   "properties": {
     "id": {
       "type": "string",
@@ -35,29 +35,33 @@
       "uniqueItems": true,
       "description": "Free-form tags for filtering ('video', 't2v', 'flux', 'turbo', 'wan-2.2', etc.). Lowercase, dots/hyphens allowed for version-like tags."
     },
-    "workflow": {
-      "type": "object",
-      "description": "The ComfyUI workflow this preset installs. Either embedded inline or fetched from a URL.",
-      "oneOf": [
-        {
-          "required": ["json"],
-          "properties": {
-            "json": {
-              "type": "object",
-              "description": "Inline ComfyUI workflow in API format (node-id-keyed)."
-            }
+    "workflows": {
+      "type": "array",
+      "minItems": 1,
+      "description": "One or more ComfyUI workflows attached to this preset. Models are the install unit and shared across all workflows; workflows are alternate ways to drive the same model bundle (e.g. I2V vs V2V variants). The ComfyGen block dropdown shows one entry per workflow.",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60,
+            "description": "Display name shown in the ComfyGen block dropdown after the preset name (e.g. 'I2V', 'V2V', 'Image Edit')."
           },
-          "additionalProperties": false
+          "json": {
+            "type": "object",
+            "description": "Inline ComfyUI workflow in API format (node-id-keyed). Mutually exclusive with url+sha256."
+          },
+          "url": {"type": "string", "format": "uri", "description": "HTTPS URL of the workflow JSON. Pinned to a release tag. Mutually exclusive with json."},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$", "description": "SHA256 of the workflow JSON for integrity. Required with url."}
         },
-        {
-          "required": ["url", "sha256"],
-          "properties": {
-            "url": {"type": "string", "format": "uri", "description": "HTTPS URL of the workflow JSON. Pinned to a release tag."},
-            "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$", "description": "SHA256 of the workflow JSON for integrity."}
-          },
-          "additionalProperties": false
-        }
-      ]
+        "oneOf": [
+          {"required": ["json"], "not": {"required": ["url"]}},
+          {"required": ["url", "sha256"], "not": {"required": ["json"]}}
+        ],
+        "additionalProperties": false
+      }
     },
     "models": {
       "type": "array",

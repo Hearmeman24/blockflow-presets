@@ -11,10 +11,13 @@
     "lightning",
     "4-step"
   ],
-  "workflow": {
-    "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/qwen-image-lighting/workflow.json",
-    "sha256": "585a678e0651d54e215a571fb91ed79c94d4bfc14bcc705492ecfc2755714cd1"
-  },
+  "workflows": [
+    {
+      "name": "Default",
+      "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/qwen-image-lighting/workflow.json",
+      "sha256": "585a678e0651d54e215a571fb91ed79c94d4bfc14bcc705492ecfc2755714cd1"
+    }
+  ],
   "models": [
     {
       "source": "huggingface",
