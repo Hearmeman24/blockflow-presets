@@ -112,6 +112,16 @@
     }
   ],
   "disk_size_estimate_gb": 50,
+  "recommendations": {
+    "global": [
+      "This preset works best when used with a character LoRA"
+    ],
+    "workflows": {
+      "Replace Face": [
+        "Consider changing the mask area value for better coverage"
+      ]
+    }
+  },
   "tested_against": {
     "comfygen_version": "0.2.0",
     "gpu_tier": "recommended",

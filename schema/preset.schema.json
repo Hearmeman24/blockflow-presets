@@ -147,6 +147,24 @@
         "gpu_tier": {"type": "string", "enum": ["budget", "recommended", "performance"]},
         "note": {"type": "string", "maxLength": 200}
       }
+    },
+    "recommendations": {
+      "type": "object",
+      "description": "Optional prose tips surfaced inline in the ComfyGen block. `global` applies to every workflow in the preset; `workflows` keys map workflow display names to their own tip lists. Both scopes optional.",
+      "properties": {
+        "global": {
+          "type": "array",
+          "items": {"type": "string", "maxLength": 200}
+        },
+        "workflows": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {"type": "string", "maxLength": 200}
+          }
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false
