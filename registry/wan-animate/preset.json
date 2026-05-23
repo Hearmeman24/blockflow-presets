@@ -1,0 +1,104 @@
+{
+  "id": "wan-animate",
+  "name": "Wan 2.2 Animate 14B",
+  "description": "Wan 2.2 Animate 14B — character-driven video animation with three workflows: Keep Background (animate while preserving the source background), Replace Character (swap the subject), and Replace Face (face-only swap). Lightning I2V distill LoRA + relight LoRA baked in. ~44GB of model files. DWPose (yolox_l + dw-ll) and SAM2 are auto-downloaded by their custom nodes on first run (~1.5 GB extra, not bundled here).",
+  "comfygen_min_version": "0.2.0",
+  "tags": [
+    "i2v",
+    "v2v",
+    "wan",
+    "wan-2.2",
+    "wan-animate",
+    "animation",
+    "character-swap",
+    "face-swap"
+  ],
+  "workflows": [
+    {
+      "name": "Keep Background",
+      "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/wan-animate/workflow_keep_background.json",
+      "sha256": "b4663315789a0460f4d4029424333ea2d894f8219ef5aaba5db72f360ac962b1"
+    },
+    {
+      "name": "Replace Character",
+      "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/wan-animate/workflow_replace_character.json",
+      "sha256": "9560314a867b30bd1670475ea6a59b607af4e6d6d43998bdfefe110b5b7341b2"
+    },
+    {
+      "name": "Replace Face",
+      "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/wan-animate/workflow_replace_face.json",
+      "sha256": "85ce1f58ad62c95dfffb4b7c3f93ada6d9c168b217a8f3c67fcfc9e732ebd4f7"
+    }
+  ],
+  "models": [
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_animate_14B_bf16.safetensors",
+      "dest": "diffusion_models/wan2.2_animate_14B_bf16.safetensors",
+      "sha256": "7d37cb0120488dec2a061135aa3018426925318a60838c3de935c829abc88667",
+      "size_gb": 32.18
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_animate_14B_relight_lora_bf16.safetensors",
+      "dest": "loras/wan2.2_animate_14B_relight_lora_bf16.safetensors",
+      "sha256": "5f4b6b9d3bc745a86e7bfd511f3880d90cf59c3bded9584d92c028f583fa74a3",
+      "size_gb": 1.34
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Lightx2v/lightx2v_I2V_14B_480p_cfg_step_distill_rank64_bf16.safetensors",
+      "dest": "loras/lightx2v_I2V_14B_480p_cfg_step_distill_rank64_bf16.safetensors",
+      "sha256": "85c4a61c30e0497aa44b91d93a893b624708461a56fe5485183b28fa07e2dfb3",
+      "size_gb": 0.69
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "dest": "text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "sha256": "c3355d30191f1f066b26d93fba017ae9809dce6c627dda5f6a66eaa651204f68",
+      "size_gb": 6.27
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors",
+      "dest": "clip_vision/clip_vision_h.safetensors",
+      "sha256": "64a7ef761bfccbadbaa3da77366aac4185a6c58fa5de5f589b42a65bcc21f161",
+      "size_gb": 1.18
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors",
+      "dest": "vae/wan_2.1_vae.safetensors",
+      "sha256": "2fc39d31359a4b0a64f55876d8ff7fa8d780956ae2cb13463b0223e15148976b",
+      "size_gb": 0.24
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Kijai/vitpose_comfy/resolve/main/onnx/vitpose_h_wholebody_data.bin",
+      "dest": "detection/vitpose_h_wholebody_data.bin",
+      "sha256": "f6a9e7cb3a87ed65a098b096029e70150408acfafc3d695019a66b289d7719e1",
+      "size_gb": 2.37
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Kijai/vitpose_comfy/resolve/main/onnx/vitpose_h_wholebody_model.onnx",
+      "dest": "detection/vitpose_h_wholebody_model.onnx",
+      "sha256": "f21466cd6c93d0066782ad5923c14a4e6569133def212dc2895c73596c2e553b",
+      "size_gb": 0.001
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Wan-AI/Wan2.2-Animate-14B/resolve/main/process_checkpoint/det/yolov10m.onnx",
+      "dest": "detection/yolov10m.onnx",
+      "sha256": "89b526498a6d55f869a6ab52e3a2eb20ad45b3711c1f7de3dd9ca0b399dfd6d7",
+      "size_gb": 0.06
+    }
+  ],
+  "disk_size_estimate_gb": 50,
+  "tested_against": {
+    "comfygen_version": "0.2.0",
+    "gpu_tier": "recommended",
+    "note": "2x H100 SXM verified end-to-end on Keep Background workflow."
+  }
+}

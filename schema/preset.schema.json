@@ -82,7 +82,7 @@
           },
           "dest": {
             "type": "string",
-            "pattern": "^(checkpoints|loras|vae|controlnet|clip|clip_vision|embeddings|upscale_models|configs|diffusion_models|text_encoders|unet)/[A-Za-z0-9._/-]+$",
+            "pattern": "^(checkpoints|loras|vae|controlnet|clip|clip_vision|embeddings|upscale_models|configs|diffusion_models|text_encoders|unet|detection)/[A-Za-z0-9._/-]+$",
             "description": "Path on the ComfyGen network volume, under the appropriate ComfyUI models subfolder."
           },
           "sha256": {
