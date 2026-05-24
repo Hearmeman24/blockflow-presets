@@ -470,7 +470,10 @@
   },
   "457": {
     "inputs": {
-      "expand": 190,
+      "expand": [
+        "554",
+        0
+      ],
       "incremental_expandrate": 1,
       "tapered_corners": true,
       "flip_input": false,
@@ -593,6 +596,15 @@
     "class_type": "DrawMaskOnImage",
     "_meta": {
       "title": "Draw Mask On Image (Swwan)"
+    }
+  },
+  "554": {
+    "inputs": {
+      "value": 150
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "Mask Expansion"
     }
   }
 }

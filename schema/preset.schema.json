@@ -55,6 +55,55 @@
           },
           "url": {"type": "string", "format": "uri", "description": "HTTPS URL of the workflow JSON. Pinned to a release tag. Mutually exclusive with json."},
           "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$", "description": "SHA256 of the workflow JSON for integrity. Required with url."},
+          "settings": {
+            "type": "array",
+            "description": "Optional author-declared knobs surfaced as a 'Workflow Settings' panel in the ComfyGen block. Use this for nodes that aren't picked up by auto-detection (KSampler / LoRA / Resolution / Reference Video / Frame Count / Prompt panels). Empty array or omitted field → no panel. Entries that overlap with auto-detected fields are silently ignored at render time — auto-detection wins.",
+            "items": {
+              "type": "object",
+              "required": ["node_id", "field", "label", "type"],
+              "properties": {
+                "node_id": {
+                  "type": "string",
+                  "description": "Node ID in the workflow whose input this knob edits."
+                },
+                "field": {
+                  "type": "string",
+                  "description": "Name of the input field on the target node."
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 60,
+                  "description": "Display label shown next to the widget."
+                },
+                "type": {
+                  "type": "string",
+                  "enum": ["int", "float", "string", "bool", "combo"],
+                  "description": "Widget type. int/float → numeric input; string → text input; bool → checkbox; combo → select with choices."
+                },
+                "description": {
+                  "type": "string",
+                  "maxLength": 240,
+                  "description": "Optional short helper text shown below the widget."
+                },
+                "min": {"type": "number"},
+                "max": {"type": "number"},
+                "step": {"type": "number", "exclusiveMinimum": 0},
+                "choices": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Allowed values for combo widgets. Required when type=combo, ignored otherwise."
+                }
+              },
+              "additionalProperties": false,
+              "allOf": [
+                {
+                  "if": {"properties": {"type": {"const": "combo"}}, "required": ["type"]},
+                  "then": {"required": ["choices"], "properties": {"choices": {"minItems": 1}}}
+                }
+              ]
+            }
+          },
           "smoke_inputs": {
             "type": "array",
             "description": "Optional fixture inputs for ComfyGen's CI smoke gate. Each entry patches one input field on a specific node before the smoke-test submit. Workflows with no file inputs (pure prompt-driven, e.g. T2I) omit this field. BlockFlow's installer ignores this field; it's consumed by the smoke gate only.",

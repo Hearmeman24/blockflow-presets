@@ -43,7 +43,19 @@
     {
       "name": "Replace Face",
       "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/wan-animate/workflow_replace_face.json",
-      "sha256": "85ce1f58ad62c95dfffb4b7c3f93ada6d9c168b217a8f3c67fcfc9e732ebd4f7"
+      "sha256": "bc52fd9b5bdbc2f0e98428959b18f53ecc15e7305fe30db812393dbb165e0117",
+      "settings": [
+        {
+          "node_id": "554",
+          "field": "value",
+          "label": "Mask Expansion",
+          "type": "int",
+          "min": 0,
+          "max": 500,
+          "step": 1,
+          "description": "Pixels to grow the face mask before swap. Higher = looser fit (more of the surrounding face included); lower = tighter face-only replacement."
+        }
+      ]
     }
   ],
   "models": [

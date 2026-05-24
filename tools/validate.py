@@ -65,6 +65,73 @@ def check_url(url: str, timeout: int = 10) -> str | None:
     return None
 
 
+_LOCAL_URL_PREFIXES = (
+    "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/",
+    "https://raw.githubusercontent.com/Hearmeman24/blockflow-presets/main/registry/",
+    "https://raw.githubusercontent.com/Hearmeman24/blockflow-presets/raw/main/registry/",
+)
+
+
+def _load_workflow_json(workflow_entry: dict, preset_dir: Path) -> tuple[dict | None, str | None]:
+    """Resolve a preset.workflows[] entry to its parsed JSON body for
+    cross-checking settings entries against. Returns (workflow_dict, warning).
+    For external URLs (not the registry's own raw paths), returns (None, warning)
+    so the caller can skip — we don't want CI to make network calls."""
+    if isinstance(workflow_entry.get("json"), dict):
+        return workflow_entry["json"], None
+    url = workflow_entry.get("url")
+    if not url:
+        return None, "workflow entry has neither 'json' nor 'url'"
+    for prefix in _LOCAL_URL_PREFIXES:
+        if url.startswith(prefix):
+            rel = url[len(prefix):]
+            local_path = preset_dir.parent / rel
+            if not local_path.exists():
+                return None, f"workflow URL maps to local path {local_path} but file is missing"
+            try:
+                return json.loads(local_path.read_text()), None
+            except json.JSONDecodeError as exc:
+                return None, f"workflow at {local_path} is not valid JSON: {exc}"
+    return None, f"workflow URL is external ({url}); skipping settings cross-check"
+
+
+def check_workflow_settings(preset: dict, preset_path: Path) -> list[str]:
+    """For each workflows[].settings entry, verify that node_id exists in the
+    referenced workflow JSON and that field is a real input key on that node.
+    External-URL workflows produce a warning but do not fail."""
+    errors: list[str] = []
+    preset_dir = preset_path.parent
+    for w_idx, workflow_entry in enumerate(preset.get("workflows") or []):
+        settings = workflow_entry.get("settings") or []
+        if not settings:
+            continue
+        workflow_label = workflow_entry.get("name", f"workflows[{w_idx}]")
+        body, warning = _load_workflow_json(workflow_entry, preset_dir)
+        if body is None:
+            if warning:
+                print(f"  WARN ({workflow_label}): {warning}")
+            continue
+        for s_idx, setting in enumerate(settings):
+            node_id = setting.get("node_id")
+            field = setting.get("field")
+            node = body.get(node_id) if isinstance(body, dict) else None
+            if not isinstance(node, dict):
+                errors.append(
+                    f"{preset_path}: workflows[{w_idx}] ('{workflow_label}') "
+                    f"settings[{s_idx}]: node_id '{node_id}' not found in workflow JSON"
+                )
+                continue
+            inputs = node.get("inputs") if isinstance(node.get("inputs"), dict) else {}
+            if field not in inputs:
+                errors.append(
+                    f"{preset_path}: workflows[{w_idx}] ('{workflow_label}') "
+                    f"settings[{s_idx}]: field '{field}' is not an input of node "
+                    f"'{node_id}' (class_type={node.get('class_type')!r}, "
+                    f"available inputs: {sorted(inputs.keys())})"
+                )
+    return errors
+
+
 def validate_preset(preset_path: Path, schema: dict, check_urls: bool) -> list[str]:
     errors: list[str] = []
     try:
@@ -90,6 +157,9 @@ def validate_preset(preset_path: Path, schema: dict, check_urls: bool) -> list[s
     size_err = check_size_sum(preset, preset_path)
     if size_err:
         errors.append(size_err)
+
+    # workflows[].settings cross-check against workflow JSON
+    errors.extend(check_workflow_settings(preset, preset_path))
 
     # URL reachability (optional, CI-only)
     if check_urls:
