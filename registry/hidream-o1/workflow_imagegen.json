@@ -1,0 +1,179 @@
+{
+  "6": {
+    "inputs": {
+      "ckpt_name": "hidream_o1_image_bf16.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "105": {
+    "inputs": {
+      "samples": [
+        "108",
+        0
+      ],
+      "vae": [
+        "6",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "108": {
+    "inputs": {
+      "add_noise": true,
+      "noise_seed": 493576922569549,
+      "cfg": 5,
+      "model": [
+        "232",
+        0
+      ],
+      "positive": [
+        "110",
+        0
+      ],
+      "negative": [
+        "188",
+        0
+      ],
+      "sampler": [
+        "230",
+        0
+      ],
+      "sigmas": [
+        "112",
+        0
+      ],
+      "latent_image": [
+        "156",
+        0
+      ]
+    },
+    "class_type": "SamplerCustom",
+    "_meta": {
+      "title": "SamplerCustom"
+    }
+  },
+  "110": {
+    "inputs": {
+      "text": [
+        "171",
+        0
+      ],
+      "clip": [
+        "6",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "112": {
+    "inputs": {
+      "scheduler": "normal",
+      "steps": 40,
+      "denoise": 1,
+      "model": [
+        "124",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "124": {
+    "inputs": {
+      "noise_scale": 8,
+      "model": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "ModelNoiseScale",
+    "_meta": {
+      "title": "ModelNoiseScale"
+    }
+  },
+  "156": {
+    "inputs": {
+      "width": 2048,
+      "height": 2048,
+      "batch_size": 1
+    },
+    "class_type": "EmptyHiDreamO1LatentImage",
+    "_meta": {
+      "title": "Empty HiDream-O1 Latent Image"
+    }
+  },
+  "171": {
+    "inputs": {
+      "value": "Graceful female skincare shot, light nude makeup, holding essence bottle, warm ivory backdrop, soft diffused light"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "User Prompt"
+    }
+  },
+  "188": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "6",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "227": {
+    "inputs": {
+      "filename_prefix": "hidream_o1",
+      "images": [
+        "105",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "230": {
+    "inputs": {
+      "sampler_name": "dpmpp_2m_sde_gpu"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "232": {
+    "inputs": {
+      "start_percent": 0.8,
+      "end_percent": 1,
+      "pattern": "single_shift",
+      "passes": "ramp_2_4",
+      "blend": "median",
+      "strength": 1,
+      "model": [
+        "124",
+        0
+      ]
+    },
+    "class_type": "HiDreamO1PatchSeamSmoothing",
+    "_meta": {
+      "title": "HiDream-O1 Patch Seam Smoothing"
+    }
+  }
+}

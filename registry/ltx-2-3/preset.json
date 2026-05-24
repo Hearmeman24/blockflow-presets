@@ -1,0 +1,92 @@
+{
+  "id": "ltx-2-3",
+  "name": "LTX 2.3 22B — Distilled (FP8)",
+  "description": "Lightricks LTX 2.3 22B in FP8 with the 384-rank distilled LoRA stacked on top. Ships two workflows: T2V (text-to-video) and I2V (image-to-video). Uses the Gemma 3 12B fp4_mixed text encoder + abliterated rank-64 LoRA for prompt understanding, plus the official 1.5x (I2V) and 2x (T2V) spatial upscalers. ~46 GB on the ComfyGen volume; recommended GPU tier.",
+  "comfygen_min_version": "0.2.0",
+  "tags": [
+    "t2v",
+    "i2v",
+    "video",
+    "ltx",
+    "ltx-2.3",
+    "lightricks",
+    "fp8",
+    "distilled"
+  ],
+  "workflows": [
+    {
+      "name": "T2V",
+      "url": "https://raw.githubusercontent.com/Hearmeman24/blockflow-presets/main/registry/ltx-2-3/workflow_t2v.json",
+      "sha256": "adaa4bd5c3828c5c54fed261641dd974fe50605b690aa6971e9e64d1533f6152"
+    },
+    {
+      "name": "I2V",
+      "url": "https://raw.githubusercontent.com/Hearmeman24/blockflow-presets/main/registry/ltx-2-3/workflow_i2v.json",
+      "sha256": "912dde8c124abc92c5dc680af53066c7963cd12b6894cdd667f71c31696b33c2"
+    }
+  ],
+  "models": [
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Lightricks/LTX-2.3-fp8/resolve/main/ltx-2.3-22b-dev-fp8.safetensors",
+      "dest": "checkpoints/ltx-2.3-22b-dev-fp8.safetensors",
+      "sha256": "28606c5b5a06ce56f896d4dfcb20f212739e07a68fbe48e53638188449d26450",
+      "size_gb": 27.14
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-22b-distilled-lora-384.safetensors",
+      "dest": "loras/ltx-2.3-22b-distilled-lora-384.safetensors",
+      "sha256": "2943ab994f3c9d88052e5a2a34cca14e4a2dfc36b1d8c407931d52d5c25dd72b",
+      "size_gb": 7.08
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-spatial-upscaler-x1.5-1.0.safetensors",
+      "dest": "upscale_models/ltx-2.3-spatial-upscaler-x1.5-1.0.safetensors",
+      "sha256": "b2b3193e68cb04b4701e1d59bec4ed5d5e3e84506d9a42d5a129d37d39823df7",
+      "size_gb": 1.02
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-spatial-upscaler-x2-1.0.safetensors",
+      "dest": "upscale_models/ltx-2.3-spatial-upscaler-x2-1.0.safetensors",
+      "sha256": "93800de87dbc448b5b31f3c5c3a1579ba6335151de061a564f6f026b0fc770ad",
+      "size_gb": 0.93
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors",
+      "dest": "text_encoders/gemma_3_12B_it_fp4_mixed.safetensors",
+      "sha256": "aaca463d11e6d8d2a4bdb0d6299214c15ef78a3f73e0ef8113d5a9d0219b3f6d",
+      "size_gb": 8.80
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/loras/gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors",
+      "dest": "loras/gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors",
+      "sha256": "87bcabeac9bec9f374232b5122d6511c2b2112d479e50176149e944b3712eb4a",
+      "size_gb": 0.585
+    }
+  ],
+  "disk_size_estimate_gb": 55,
+  "tested_against": {
+    "comfygen_version": "0.2.0",
+    "gpu_tier": "recommended",
+    "note": "FP8 base + distill LoRA + Gemma-12B fp4 text encoder. The 1.5x spatial upscaler is used by I2V; the 2x by T2V."
+  },
+  "recommendations": {
+    "global": [
+      "Both workflows stack the 384-rank distilled LoRA on the base FP8 model and the abliterated rank-64 LoRA on the Gemma text encoder.",
+      "Recommended GPU tier or above. The FP8 base is ~27 GB; the Gemma fp4 encoder is ~9 GB."
+    ],
+    "workflows": {
+      "T2V": [
+        "Uses the 2x spatial upscaler. Frame counts must be 4n+1 (e.g. 81, 121, 161)."
+      ],
+      "I2V": [
+        "Uses the 1.5x spatial upscaler so generated video stays closer to the source image's resolution."
+      ]
+    }
+  }
+}

@@ -1,0 +1,251 @@
+{
+  "6": {
+    "inputs": {
+      "ckpt_name": "hidream_o1_image_bf16.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "104": {
+    "inputs": {
+      "positive": [
+        "110",
+        0
+      ],
+      "negative": [
+        "188",
+        0
+      ],
+      "images.image_1": [
+        "213",
+        0
+      ]
+    },
+    "class_type": "HiDreamO1ReferenceImages",
+    "_meta": {
+      "title": "HiDream-O1 Reference Images"
+    }
+  },
+  "105": {
+    "inputs": {
+      "samples": [
+        "108",
+        0
+      ],
+      "vae": [
+        "6",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "108": {
+    "inputs": {
+      "add_noise": true,
+      "noise_seed": 270186383729385,
+      "cfg": 1,
+      "model": [
+        "124",
+        0
+      ],
+      "positive": [
+        "104",
+        0
+      ],
+      "negative": [
+        "104",
+        1
+      ],
+      "sampler": [
+        "125",
+        0
+      ],
+      "sigmas": [
+        "112",
+        0
+      ],
+      "latent_image": [
+        "172",
+        0
+      ]
+    },
+    "class_type": "SamplerCustom",
+    "_meta": {
+      "title": "SamplerCustom"
+    }
+  },
+  "110": {
+    "inputs": {
+      "text": [
+        "171",
+        0
+      ],
+      "clip": [
+        "6",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "112": {
+    "inputs": {
+      "scheduler": "normal",
+      "steps": 28,
+      "denoise": 1,
+      "model": [
+        "124",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "124": {
+    "inputs": {
+      "noise_scale": 7.6,
+      "model": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "ModelNoiseScale",
+    "_meta": {
+      "title": "ModelNoiseScale"
+    }
+  },
+  "125": {
+    "inputs": {
+      "s_noise": 1,
+      "s_noise_end": 1,
+      "noise_clip_std": 2.5
+    },
+    "class_type": "SamplerLCM",
+    "_meta": {
+      "title": "SamplerLCM"
+    }
+  },
+  "157": {
+    "inputs": {
+      "image": [
+        "196",
+        0
+      ]
+    },
+    "class_type": "GetImageSize",
+    "_meta": {
+      "title": "Get Image Size"
+    }
+  },
+  "171": {
+    "inputs": {
+      "value": "Transform the background into a rainy neon city street at night, with wet asphalt reflections, blurred neon signs"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "User Prompt"
+    }
+  },
+  "172": {
+    "inputs": {
+      "width": [
+        "218",
+        1
+      ],
+      "height": [
+        "219",
+        1
+      ],
+      "batch_size": 1
+    },
+    "class_type": "EmptyHiDreamO1LatentImage",
+    "_meta": {
+      "title": "Empty HiDream-O1 Latent Image"
+    }
+  },
+  "188": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "6",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "196": {
+    "inputs": {
+      "upscale_method": "lanczos",
+      "megapixels": 4,
+      "resolution_steps": 1,
+      "image": [
+        "213",
+        0
+      ]
+    },
+    "class_type": "ImageScaleToTotalPixels",
+    "_meta": {
+      "title": "ImageScaleToTotalPixels"
+    }
+  },
+  "213": {
+    "inputs": {
+      "image": "noir_portrait.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "218": {
+    "inputs": {
+      "expression": "floor(a/32)*32",
+      "values.a": [
+        "157",
+        0
+      ]
+    },
+    "class_type": "ComfyMathExpression",
+    "_meta": {
+      "title": "Math Expression"
+    }
+  },
+  "219": {
+    "inputs": {
+      "expression": "floor(a/32)*32",
+      "values.a": [
+        "157",
+        1
+      ]
+    },
+    "class_type": "ComfyMathExpression",
+    "_meta": {
+      "title": "Math Expression"
+    }
+  },
+  "227": {
+    "inputs": {
+      "filename_prefix": "hidream_o1",
+      "images": [
+        "105",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  }
+}

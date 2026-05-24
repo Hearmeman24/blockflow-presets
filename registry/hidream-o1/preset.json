@@ -1,0 +1,50 @@
+{
+  "id": "hidream-o1",
+  "name": "HiDream O1 Image",
+  "description": "HiDream Labs' O1 image model — single-file ComfyUI repack from Comfy-Org. Ships two workflows: Image Gen (text-to-image) and Image Edit (reference-image-driven editing). Both use the same BF16 base checkpoint (~15 GB) with text encoder and VAE bundled. ~15 GB on the ComfyGen volume.",
+  "comfygen_min_version": "0.2.0",
+  "tags": [
+    "t2i",
+    "image-edit",
+    "hidream",
+    "hidream-o1",
+    "reference-image"
+  ],
+  "workflows": [
+    {
+      "name": "Image Gen",
+      "url": "https://raw.githubusercontent.com/Hearmeman24/blockflow-presets/main/registry/hidream-o1/workflow_imagegen.json",
+      "sha256": "cf15155c744685cd22c594e87f7d180558b7b06d52b9643eb2850a808eacfe23"
+    },
+    {
+      "name": "Image Edit",
+      "url": "https://raw.githubusercontent.com/Hearmeman24/blockflow-presets/main/registry/hidream-o1/workflow_imageedit.json",
+      "sha256": "037f101c7f7cff92806f070dbbf3ddc340d6d6552b555f0bceddbe4448eaca9f"
+    }
+  ],
+  "models": [
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/HiDream-O1-Image/resolve/main/checkpoints/hidream_o1_image_bf16.safetensors",
+      "dest": "checkpoints/hidream_o1_image_bf16.safetensors",
+      "sha256": "0520134a47e5b2bacea25804b2a6021413eb95945344b5a953aa14170edff1aa",
+      "size_gb": 15.24
+    }
+  ],
+  "disk_size_estimate_gb": 18,
+  "tested_against": {
+    "comfygen_version": "0.2.0",
+    "gpu_tier": "recommended",
+    "note": "Both workflows share the BF16 base checkpoint to save disk."
+  },
+  "recommendations": {
+    "workflows": {
+      "Image Gen": [
+        "Pure text-to-image with the full BF16 model. Recommended GPU tier or above for the 15 GB checkpoint."
+      ],
+      "Image Edit": [
+        "Reference-image-driven editing. Connect a source image via the LoadImage node."
+      ]
+    }
+  }
+}
