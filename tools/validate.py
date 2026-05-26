@@ -56,31 +56,56 @@ def check_size_sum(preset: dict, source: Path) -> str | None:
     return None
 
 
+# Cloudflare (which fronts civitai.com) blocks the default `Python-urllib/x.y`
+# User-Agent with `error code: 1010` ("browser signature banned"). Setting a
+# project-specific UA gets us through. The actual value doesn't matter much
+# as long as it's not Python's default.
+_VALIDATOR_UA = (
+    "blockflow-validator/1.0 (+https://github.com/Hearmeman24/blockflow-presets)"
+)
+
+
+def _mask_civitai_token(url: str) -> str:
+    """Strip ?token=... from a URL so error messages don't leak secrets."""
+    import re
+    return re.sub(r"([?&])token=[^&]+", r"\1token=REDACTED", url)
+
+
 def check_url(url: str, timeout: int = 10) -> str | None:
-    # CivitAI requires bearer-token auth on every API call; without it,
-    # /api/download/models/<vid> returns 401/403. Locally the token is
-    # optional (and most contributors won't have it); in CI the
-    # CIVITAI_TOKEN secret is set so the check is real.
-    headers: dict[str, str] = {}
+    # CivitAI requires auth on every download URL. Two non-obvious quirks
+    # discovered while wiring this up:
+    #   1) Cloudflare blocks Python's default UA outright (error code 1010).
+    #      Setting any reasonable User-Agent fixes that.
+    #   2) Authorization: Bearer makes CivitAI redirect to S3 with a broken
+    #      signature ("Missing x-amz-content-sha256") → 400. The endpoint's
+    #      intended auth path is the `?token=<x>` query parameter, which
+    #      redirects cleanly to a signed S3 URL → 200 on HEAD.
+    # Contributors without CIVITAI_TOKEN still get a graceful skip on
+    # 401/403 so they can run the validator locally without a token.
     is_civitai = "civitai.com" in url
     civitai_token = os.environ.get("CIVITAI_TOKEN", "")
+
+    request_url = url
     if is_civitai and civitai_token:
-        headers["Authorization"] = f"Bearer {civitai_token}"
+        sep = "&" if "?" in url else "?"
+        request_url = f"{url}{sep}token={civitai_token}"
+
+    headers = {"User-Agent": _VALIDATOR_UA}
+    # Use HEAD; both the non-civitai (GitHub raw etc.) and the civitai
+    # token-query path return 200 on HEAD.
+    method = "HEAD"
+
     try:
-        req = urllib.request.Request(url, method="HEAD", headers=headers)
+        req = urllib.request.Request(request_url, method=method, headers=headers)
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             if resp.status >= 400:
-                return f"HEAD {url} returned {resp.status}"
+                return f"{method} {_mask_civitai_token(request_url)} returned {resp.status}"
     except urllib.error.HTTPError as exc:
-        # CivitAI without a token: degrade to a warning-shaped skip so
-        # contributors who don't have CIVITAI_TOKEN can still run the
-        # validator locally. CI sets the secret so this branch doesn't
-        # mask real failures there.
         if is_civitai and not civitai_token and exc.code in (401, 403):
             return None
-        return f"HEAD {url} failed: {exc}"
+        return f"{method} {_mask_civitai_token(request_url)} failed: {exc}"
     except Exception as exc:
-        return f"HEAD {url} failed: {exc}"
+        return f"{method} {_mask_civitai_token(request_url)} failed: {exc}"
     return None
 
 
