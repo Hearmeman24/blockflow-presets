@@ -1,7 +1,7 @@
 {
   "62": {
     "inputs": {
-      "image": "SCR-20260526-ogck.jpeg"
+      "image": "973P98PFPYK9DJ1XBJB1XCKR20.jpeg"
     },
     "class_type": "LoadImage",
     "_meta": {
@@ -118,7 +118,7 @@
     },
     "class_type": "UnetLoaderGGUF",
     "_meta": {
-      "title": "Unet Loader (GGUF) HIGH"
+      "title": "Unet Loader (GGUF) LOW"
     }
   },
   "370": {
@@ -127,7 +127,7 @@
     },
     "class_type": "UnetLoaderGGUF",
     "_meta": {
-      "title": "Unet Loader (GGUF) LOW"
+      "title": "Unet Loader (GGUF) HIGH"
     }
   },
   "512": {
@@ -223,13 +223,13 @@
   },
   "887": {
     "inputs": {
-      "width": 1280,
-      "height": 720,
+      "width": 720,
+      "height": 1280,
       "upscale_method": "nearest-exact",
       "keep_proportion": "resize",
       "pad_color": "0, 0, 0",
       "crop_position": "center",
-      "divisible_by": 32,
+      "divisible_by": 16,
       "device": "cpu",
       "image": [
         "62",
@@ -352,7 +352,7 @@
     },
     "class_type": "PrimitiveStringMultiline",
     "_meta": {
-      "title": "Prompt"
+      "title": "Segment 1 Prompt"
     }
   },
   "951": {
@@ -382,61 +382,117 @@
       "title": "Seed (rgthree)"
     }
   },
-  "977:972": {
+  "989": {
     "inputs": {
-      "model_name": "2xLiveActionV1_SPAN_490000.pth"
+      "frame_rate": 16,
+      "loop_count": 0,
+      "filename_prefix": "Wan2.2_SVI_4pass_MoreMotion",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "906",
+        2
+      ]
     },
-    "class_type": "UpscaleModelLoader",
+    "class_type": "VHS_VideoCombine",
     "_meta": {
-      "title": "Load Upscale Model"
+      "title": "Final Video"
     }
   },
-  "965:980": {
+  "990": {
     "inputs": {
-      "value": [
-        "984",
+      "value": "woman performing a fast deepthroat blowjob on a man, Deepthroat blowjob. Hardcore fast blowjob. She pushes her head forward, shoving the penis completely inside her mouth, the penis enters her mouth till her lips reaching the end. She is doing a deep throat blowjob. She moves her head extremely fast to increase the sexual gratification, "
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "Segment 2 Prompt"
+    }
+  },
+  "991": {
+    "inputs": {
+      "value": "She takes her head up and looks at the viewer, her hands moves from the bottom of the frame and grabbing the shaft of his erect penis, she is giving him a handjob, her hand moves up and down in rapid motion."
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "Segment 3 Prompt"
+    }
+  },
+  "992": {
+    "inputs": {
+      "value": "She takes her head up and looks at the viewer, her hands moves from the bottom of the frame and grabbing the shaft of his erect penis, she is giving him a handjob, her hand moves up and down in rapid motion."
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "Segment 4 Prompt"
+    }
+  },
+  "993": {
+    "inputs": {
+      "text": [
+        "990",
+        0
+      ],
+      "clip": [
+        "224",
         0
       ]
     },
-    "class_type": "PrimitiveInt",
+    "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "seed"
+      "title": "Positive Prompt"
     }
   },
-  "964:981": {
+  "994": {
     "inputs": {
-      "value": [
-        "984",
+      "text": [
+        "991",
+        0
+      ],
+      "clip": [
+        "224",
         0
       ]
     },
-    "class_type": "PrimitiveInt",
+    "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "Int"
+      "title": "Positive Prompt"
     }
   },
-  "963:982": {
+  "995": {
     "inputs": {
-      "value": [
-        "984",
+      "text": [
+        "992",
+        0
+      ],
+      "clip": [
+        "224",
         0
       ]
     },
-    "class_type": "PrimitiveInt",
+    "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "Int"
+      "title": "Positive Prompt"
     }
   },
-  "962:983": {
+  "965:898": {
     "inputs": {
-      "value": [
-        "984",
+      "samples": [
+        "965:895",
+        0
+      ],
+      "vae": [
+        "225",
         0
       ]
     },
-    "class_type": "PrimitiveInt",
+    "class_type": "VAEDecode",
     "_meta": {
-      "title": "Int"
+      "title": "Decode Pass 1"
     }
   },
   "965:893": {
@@ -509,6 +565,18 @@
       "title": "Pass 1 - 1. just SVI"
     }
   },
+  "965:980": {
+    "inputs": {
+      "value": [
+        "984",
+        0
+      ]
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "seed"
+    }
+  },
   "965:894": {
     "inputs": {
       "add_noise": "disable",
@@ -566,7 +634,7 @@
         0
       ],
       "cfg": 1,
-      "sampler_name": "res_2s",
+      "sampler_name": "er_sde",
       "scheduler": "simple",
       "start_at_step": [
         "194",
@@ -594,51 +662,6 @@
     "class_type": "KSamplerAdvanced",
     "_meta": {
       "title": "Pass 1 - 3. SVI lightning low"
-    }
-  },
-  "965:898": {
-    "inputs": {
-      "samples": [
-        "965:895",
-        0
-      ],
-      "vae": [
-        "225",
-        0
-      ]
-    },
-    "class_type": "VAEDecode",
-    "_meta": {
-      "title": "Decode Pass 1"
-    }
-  },
-  "964:903": {
-    "inputs": {
-      "length": [
-        "966",
-        0
-      ],
-      "motion_latent_count": 1,
-      "positive": [
-        "891",
-        0
-      ],
-      "negative": [
-        "892",
-        0
-      ],
-      "anchor_samples": [
-        "896",
-        0
-      ],
-      "prev_samples": [
-        "965:895",
-        0
-      ]
-    },
-    "class_type": "WanImageToVideoSVIPro",
-    "_meta": {
-      "title": "Pass 2 SVI latent"
     }
   },
   "964:902": {
@@ -686,6 +709,47 @@
       "title": "Pass 2 - 1. just SVI"
     }
   },
+  "964:903": {
+    "inputs": {
+      "length": [
+        "966",
+        0
+      ],
+      "motion_latent_count": 1,
+      "positive": [
+        "993",
+        0
+      ],
+      "negative": [
+        "892",
+        0
+      ],
+      "anchor_samples": [
+        "896",
+        0
+      ],
+      "prev_samples": [
+        "965:895",
+        0
+      ]
+    },
+    "class_type": "WanImageToVideoSVIPro",
+    "_meta": {
+      "title": "Pass 2 SVI latent"
+    }
+  },
+  "964:981": {
+    "inputs": {
+      "value": [
+        "984",
+        0
+      ]
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "Int"
+    }
+  },
   "964:907": {
     "inputs": {
       "add_noise": "disable",
@@ -731,6 +795,22 @@
       "title": "Pass 2 - 2. SVI lightning high"
     }
   },
+  "964:913": {
+    "inputs": {
+      "samples": [
+        "964:908",
+        0
+      ],
+      "vae": [
+        "225",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "Decode Pass 2"
+    }
+  },
   "964:908": {
     "inputs": {
       "add_noise": "disable",
@@ -743,7 +823,7 @@
         0
       ],
       "cfg": 1,
-      "sampler_name": "res_2s",
+      "sampler_name": "er_sde",
       "scheduler": "simple",
       "start_at_step": [
         "194",
@@ -771,51 +851,6 @@
     "class_type": "KSamplerAdvanced",
     "_meta": {
       "title": "Pass 2 - 3. SVI lightning low"
-    }
-  },
-  "964:913": {
-    "inputs": {
-      "samples": [
-        "964:908",
-        0
-      ],
-      "vae": [
-        "225",
-        0
-      ]
-    },
-    "class_type": "VAEDecode",
-    "_meta": {
-      "title": "Decode Pass 2"
-    }
-  },
-  "963:914": {
-    "inputs": {
-      "length": [
-        "966",
-        0
-      ],
-      "motion_latent_count": 1,
-      "positive": [
-        "891",
-        0
-      ],
-      "negative": [
-        "892",
-        0
-      ],
-      "anchor_samples": [
-        "896",
-        0
-      ],
-      "prev_samples": [
-        "964:908",
-        0
-      ]
-    },
-    "class_type": "WanImageToVideoSVIPro",
-    "_meta": {
-      "title": "Pass 3 SVI latent"
     }
   },
   "963:915": {
@@ -863,6 +898,63 @@
       "title": "Pass 3 - 1. just SVI"
     }
   },
+  "963:918": {
+    "inputs": {
+      "samples": [
+        "963:917",
+        0
+      ],
+      "vae": [
+        "225",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "Decode Pass 3"
+    }
+  },
+  "963:914": {
+    "inputs": {
+      "length": [
+        "966",
+        0
+      ],
+      "motion_latent_count": 1,
+      "positive": [
+        "994",
+        0
+      ],
+      "negative": [
+        "892",
+        0
+      ],
+      "anchor_samples": [
+        "896",
+        0
+      ],
+      "prev_samples": [
+        "964:908",
+        0
+      ]
+    },
+    "class_type": "WanImageToVideoSVIPro",
+    "_meta": {
+      "title": "Pass 3 SVI latent"
+    }
+  },
+  "963:982": {
+    "inputs": {
+      "value": [
+        "984",
+        0
+      ]
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "Int"
+    }
+  },
   "963:916": {
     "inputs": {
       "add_noise": "disable",
@@ -875,8 +967,8 @@
         0
       ],
       "cfg": 1,
-      "sampler_name": "er_sde",
-      "scheduler": "beta",
+      "sampler_name": "euler",
+      "scheduler": "simple",
       "start_at_step": [
         "193",
         0
@@ -920,8 +1012,8 @@
         0
       ],
       "cfg": 1,
-      "sampler_name": "res_2s",
-      "scheduler": "beta",
+      "sampler_name": "er_sde",
+      "scheduler": "simple",
       "start_at_step": [
         "194",
         0
@@ -948,51 +1040,6 @@
     "class_type": "KSamplerAdvanced",
     "_meta": {
       "title": "Pass 3 - 3. SVI lightning low"
-    }
-  },
-  "963:918": {
-    "inputs": {
-      "samples": [
-        "963:917",
-        0
-      ],
-      "vae": [
-        "225",
-        0
-      ]
-    },
-    "class_type": "VAEDecode",
-    "_meta": {
-      "title": "Decode Pass 3"
-    }
-  },
-  "962:932": {
-    "inputs": {
-      "length": [
-        "966",
-        0
-      ],
-      "motion_latent_count": 1,
-      "positive": [
-        "891",
-        0
-      ],
-      "negative": [
-        "892",
-        0
-      ],
-      "anchor_samples": [
-        "896",
-        0
-      ],
-      "prev_samples": [
-        "963:917",
-        0
-      ]
-    },
-    "class_type": "WanImageToVideoSVIPro",
-    "_meta": {
-      "title": "Pass 4 SVI latent"
     }
   },
   "962:933": {
@@ -1040,6 +1087,63 @@
       "title": "Pass 4 - 1. just SVI"
     }
   },
+  "962:936": {
+    "inputs": {
+      "samples": [
+        "962:935",
+        0
+      ],
+      "vae": [
+        "225",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "Decode Pass 4"
+    }
+  },
+  "962:932": {
+    "inputs": {
+      "length": [
+        "966",
+        0
+      ],
+      "motion_latent_count": 1,
+      "positive": [
+        "995",
+        0
+      ],
+      "negative": [
+        "892",
+        0
+      ],
+      "anchor_samples": [
+        "896",
+        0
+      ],
+      "prev_samples": [
+        "963:917",
+        0
+      ]
+    },
+    "class_type": "WanImageToVideoSVIPro",
+    "_meta": {
+      "title": "Pass 4 SVI latent"
+    }
+  },
+  "962:983": {
+    "inputs": {
+      "value": [
+        "984",
+        0
+      ]
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "Int"
+    }
+  },
   "962:934": {
     "inputs": {
       "add_noise": "disable",
@@ -1052,8 +1156,8 @@
         0
       ],
       "cfg": 1,
-      "sampler_name": "er_sde",
-      "scheduler": "beta",
+      "sampler_name": "euler",
+      "scheduler": "simple",
       "start_at_step": [
         "193",
         0
@@ -1097,8 +1201,8 @@
         0
       ],
       "cfg": 1,
-      "sampler_name": "res_2s",
-      "scheduler": "beta",
+      "sampler_name": "er_sde",
+      "scheduler": "simple",
       "start_at_step": [
         "194",
         0
@@ -1127,20 +1231,13 @@
       "title": "Pass 4 - 3. SVI lightning low"
     }
   },
-  "962:936": {
+  "977:972": {
     "inputs": {
-      "samples": [
-        "962:935",
-        0
-      ],
-      "vae": [
-        "225",
-        0
-      ]
+      "model_name": "2xLiveActionV1_SPAN_490000.pth"
     },
-    "class_type": "VAEDecode",
+    "class_type": "UpscaleModelLoader",
     "_meta": {
-      "title": "Decode Pass 4"
+      "title": "Load Upscale Model"
     }
   },
   "977:975": {

@@ -17,7 +17,7 @@
     {
       "name": "4-pass MoreMotion",
       "url": "https://raw.githubusercontent.com/Hearmeman24/blockflow-presets/main/registry/wan22-svi-4pass/workflow.json",
-      "sha256": "40217662de811bd657cb70bdc6e52e8f07933acb129db2f19f48686a0a5815f1",
+      "sha256": "d7e67234b191d90478880ee5fab61c9ce32ab09d3d177289f83f127c60b21e16",
       "hidden_nodes": [
         "881", "882", "883", "884",
         "965:894", "965:895", "965:901",
