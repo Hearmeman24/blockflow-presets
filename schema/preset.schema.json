@@ -136,6 +136,12 @@
               },
               "additionalProperties": false
             }
+          },
+          "hidden_nodes": {
+            "type": "array",
+            "items": {"type": "string"},
+            "uniqueItems": true,
+            "description": "Node IDs to suppress from the ComfyGen block's auto-detected panels (KSampler / LoRA / Resolution / Frame / RefVideo / LoadNode / Text). Hidden nodes still execute with whatever values the workflow JSON ships; they just don't get a UI knob. Unknown IDs are silently ignored. Use to declutter when a workflow has fixed values the end-user shouldn't override."
           }
         },
         "oneOf": [
