@@ -144,6 +144,11 @@ jobs:
         run: pip install jsonschema
 
       - name: HEAD-check URLs for changed presets
+        env:
+          # sgs-ui-2hf follow-up: forward the CivitAI bearer token so
+          # check_url() can authenticate against civitai.com URLs (without it
+          # CivitAI returns 401/403 even on HEAD).
+          CIVITAI_TOKEN: ${{ secrets.CIVITAI_TOKEN }}
         run: |
           set -euo pipefail
           ids="${{ needs.detect-changes.outputs.preset_ids }}"

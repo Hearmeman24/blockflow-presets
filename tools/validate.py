@@ -15,6 +15,8 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import os
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -55,11 +57,28 @@ def check_size_sum(preset: dict, source: Path) -> str | None:
 
 
 def check_url(url: str, timeout: int = 10) -> str | None:
+    # CivitAI requires bearer-token auth on every API call; without it,
+    # /api/download/models/<vid> returns 401/403. Locally the token is
+    # optional (and most contributors won't have it); in CI the
+    # CIVITAI_TOKEN secret is set so the check is real.
+    headers: dict[str, str] = {}
+    is_civitai = "civitai.com" in url
+    civitai_token = os.environ.get("CIVITAI_TOKEN", "")
+    if is_civitai and civitai_token:
+        headers["Authorization"] = f"Bearer {civitai_token}"
     try:
-        req = urllib.request.Request(url, method="HEAD")
+        req = urllib.request.Request(url, method="HEAD", headers=headers)
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             if resp.status >= 400:
                 return f"HEAD {url} returned {resp.status}"
+    except urllib.error.HTTPError as exc:
+        # CivitAI without a token: degrade to a warning-shaped skip so
+        # contributors who don't have CIVITAI_TOKEN can still run the
+        # validator locally. CI sets the secret so this branch doesn't
+        # mask real failures there.
+        if is_civitai and not civitai_token and exc.code in (401, 403):
+            return None
+        return f"HEAD {url} failed: {exc}"
     except Exception as exc:
         return f"HEAD {url} failed: {exc}"
     return None
