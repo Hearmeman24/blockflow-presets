@@ -1,0 +1,103 @@
+{
+  "id": "wan22-svi-4pass",
+  "name": "Wan 2.2 SVI 4-pass + MoreMotion",
+  "description": "Wan 2.2 I2V 14B Stable-Video-Infinity (SVI v2 PRO) with a 4-pass motion-enhancement workflow. GGUF Q8 NSFW SVI camera unet pair (CivitAI) + Wan 2.1 VAE + UMT5 fp8 + 4 stacked SVI/lightx2v LoRAs. The ComfyGen block hides all 12 KSamplers and the 4 fixed LoRA loaders — only the 3 Power Lora Loaders (High LoRAs 1+2, Low LoRAs) are exposed for adding character/style LoRAs. ~40 GB on the volume.",
+  "comfygen_min_version": "0.2.0",
+  "tags": [
+    "i2v",
+    "video",
+    "wan",
+    "wan-2.2",
+    "svi",
+    "lightx2v",
+    "gguf",
+    "civitai"
+  ],
+  "workflows": [
+    {
+      "name": "4-pass MoreMotion",
+      "url": "https://raw.githubusercontent.com/Hearmeman24/blockflow-presets/main/registry/wan22-svi-4pass/workflow.json",
+      "sha256": "4148e7fdfc8faf40ff2410f1c03c294e68a50b36c9d0a8021ea67b70393fdf49",
+      "hidden_nodes": [
+        "881", "882", "883", "884",
+        "965:894", "965:895", "965:901",
+        "964:902", "964:907", "964:908",
+        "963:915", "963:916", "963:917",
+        "962:933", "962:934", "962:935"
+      ]
+    }
+  ],
+  "models": [
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "dest": "text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "sha256": "c3355d30191f1f066b26d93fba017ae9809dce6c627dda5f6a66eaa651204f68",
+      "size_gb": 6.27
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors",
+      "dest": "vae/wan_2.1_vae.safetensors",
+      "sha256": "2fc39d31359a4b0a64f55876d8ff7fa8d780956ae2cb13463b0223e15148976b",
+      "size_gb": 0.236
+    },
+    {
+      "source": "civitai",
+      "url": "https://civitai.com/api/download/models/2668710",
+      "dest": "unet/wan22EnhancedNSFWSVICamera_nolightningSVICfQ8H.gguf",
+      "sha256": "b63c0e0a6131c95f5768164f86d62cc95856c4d8257308b169260a35d0340429",
+      "size_gb": 14.35
+    },
+    {
+      "source": "civitai",
+      "url": "https://civitai.com/api/download/models/2668712",
+      "dest": "unet/wan22EnhancedNSFWSVICamera_nolightningSVICfQ8L.gguf",
+      "sha256": "128dde433f818a2328028e1764539c91ee4b32be394db447841f3e38f500ce0f",
+      "size_gb": 14.35
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/LoRAs/Stable-Video-Infinity/v2.0/SVI_v2_PRO_Wan2.2-I2V-A14B_HIGH_lora_rank_128_fp16.safetensors",
+      "dest": "loras/SVI_v2_PRO_Wan2.2-I2V-A14B_HIGH_lora_rank_128_fp16.safetensors",
+      "sha256": "6ddfead305cb315612bfe47291aada7431ca6bba688e88df3b2b43788ee11679",
+      "size_gb": 1.143
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/LoRAs/Stable-Video-Infinity/v2.0/SVI_v2_PRO_Wan2.2-I2V-A14B_LOW_lora_rank_128_fp16.safetensors",
+      "dest": "loras/SVI_v2_PRO_Wan2.2-I2V-A14B_LOW_lora_rank_128_fp16.safetensors",
+      "sha256": "eae247da55aab0ee67f8ad99fa46aac09b69156e2ae7080b4737d611780aa7af",
+      "size_gb": 1.143
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Lightx2v/lightx2v_I2V_14B_480p_cfg_step_distill_rank128_bf16.safetensors",
+      "dest": "loras/lightx2v_I2V_14B_480p_cfg_step_distill_rank128_bf16.safetensors",
+      "sha256": "5c324ada09cfa447844f5d9a57240463a515de38270ef40c7513d74be3e64e72",
+      "size_gb": 1.366
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/lightx2v/Wan2.2-Lightning/resolve/main/Wan2.2-I2V-A14B-4steps-lora-rank64-Seko-V1/low_noise_model.safetensors",
+      "dest": "loras/i2v_lightx2v_low_noise_model.safetensors",
+      "sha256": "024f21de095bc8fad9809ded3e9e49a2e170dcf27075da8145ba7d60d8aab7f9",
+      "size_gb": 1.143
+    }
+  ],
+  "disk_size_estimate_gb": 48,
+  "tested_against": {
+    "comfygen_version": "0.2.0",
+    "gpu_tier": "performance",
+    "note": "GGUF Q8 unet pair + 4 stacked LoRAs at I2V resolution. 4-pass workflow is GPU-heavy; recommended for performance tier."
+  },
+  "recommendations": {
+    "workflows": {
+      "4-pass MoreMotion": [
+        "ComfyGen block only exposes the 3 Power Lora Loaders — add character/style LoRAs through 'High LoRAs 1', 'High LoRAs 2', or 'Low LoRAs' as appropriate.",
+        "All KSampler params and the 4 fixed SVI/lightx2v LoRAs are baked into the workflow JSON — adjust by editing the upstream workflow file, not via the block.",
+        "GGUF Q8 unet weights are downloaded from CivitAI — set `civitai_token` in Settings → Credentials before installing."
+      ]
+    }
+  }
+}
