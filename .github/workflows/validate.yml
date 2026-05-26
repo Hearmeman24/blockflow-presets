@@ -108,8 +108,23 @@ jobs:
     name: Schema + sizes
     needs: detect-changes
     runs-on: ubuntu-latest
+    # Auto-regen step pushes a fixup commit back to the branch when the
+    # checked-in manifest.json is stale — needs write access. Pull-requests
+    # from forks won't get this (GITHUB_TOKEN is read-only for fork PRs);
+    # the regen step will detect the failure and surface a clear error so
+    # the contributor can run `python tools/build_manifest.py` locally.
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Need a token with push perms so the auto-regen step can push the
+          # fixup commit back. Default GITHUB_TOKEN works for same-repo
+          # pushes; forks fall through (see permissions note above).
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # We push back to ${{ github.head_ref }} on PRs, not the detached
+          # merge ref that pull_request defaults to.
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - uses: actions/setup-python@v5
         with:
@@ -121,8 +136,28 @@ jobs:
       - name: Validate registry (schema + size-sum)
         run: python tools/validate.py
 
-      - name: Verify manifest.json is up-to-date
-        run: python tools/build_manifest.py --check
+      - name: Auto-regen manifest.json (commit back if stale)
+        # [skip ci] in the commit message prevents the fixup push from
+        # re-triggering this workflow → no infinite loop.
+        run: |
+          set -euo pipefail
+          python tools/build_manifest.py
+          if git diff --quiet -- manifest.json; then
+            echo "manifest.json already up-to-date"
+            exit 0
+          fi
+          echo "manifest.json was stale — committing regen"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifest.json
+          git commit -m "chore: auto-regen manifest.json [skip ci]"
+          # `|| { ... }` so a push failure (e.g. fork PR with read-only token)
+          # surfaces a clear hint instead of an opaque permissions error.
+          git push || {
+            echo "::error::Could not push the manifest regen back to the branch."
+            echo "::error::If this is a fork PR, please run \`python tools/build_manifest.py\` locally and commit the result."
+            exit 1
+          }
 
   # ---------------------------------------------------------------------------
   # url-check — HEAD-checks every model URL referenced by CHANGED presets.
