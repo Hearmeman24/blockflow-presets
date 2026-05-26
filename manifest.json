@@ -75,7 +75,7 @@
     {
       "id": "wan22-svi-4pass",
       "name": "Wan 2.2 SVI 4-pass + MoreMotion",
-      "description": "Wan 2.2 I2V 14B Stable-Video-Infinity (SVI v2 PRO) with a 4-pass motion-enhancement workflow. Uses Comfy-Org's UMT5 fp8 text encoder, Wan 2.1 VAE, GGUF Q8 NSFW SVI camera unet (high + low noise pairs from CivitAI), and stacks the SVI rank-128 + lightx2v step-distill LoRAs at high/low noise. The ComfyGen block hides all 12 KSamplers and the 4 fixed SVI/lightx2v LoRA loaders \u2014 only the 3 Power Lora Loaders (High LoRAs 1, High LoRAs 2, Low LoRAs) are exposed to the user for adding character/style LoRAs. ~40 GB on the ComfyGen volume.",
+      "description": "Wan 2.2 I2V 14B Stable-Video-Infinity (SVI v2 PRO) with a 4-pass motion-enhancement workflow. GGUF Q8 NSFW SVI camera unet pair (CivitAI) + Wan 2.1 VAE + UMT5 fp8 + 4 stacked SVI/lightx2v LoRAs. The ComfyGen block hides all 12 KSamplers and the 4 fixed LoRA loaders \u2014 only the 3 Power Lora Loaders (High LoRAs 1+2, Low LoRAs) are exposed for adding character/style LoRAs. ~40 GB on the volume.",
       "comfygen_min_version": "0.2.0",
       "tags": [
         "i2v",
