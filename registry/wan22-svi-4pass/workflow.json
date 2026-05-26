@@ -382,28 +382,6 @@
       "title": "Seed (rgthree)"
     }
   },
-  "989": {
-    "inputs": {
-      "frame_rate": 16,
-      "loop_count": 0,
-      "filename_prefix": "Wan2.2_SVI_4pass_MoreMotion",
-      "format": "video/h264-mp4",
-      "pix_fmt": "yuv420p",
-      "crf": 19,
-      "save_metadata": true,
-      "trim_to_audio": false,
-      "pingpong": false,
-      "save_output": true,
-      "images": [
-        "906",
-        2
-      ]
-    },
-    "class_type": "VHS_VideoCombine",
-    "_meta": {
-      "title": "Final Video"
-    }
-  },
   "990": {
     "inputs": {
       "value": "woman performing a fast deepthroat blowjob on a man, Deepthroat blowjob. Hardcore fast blowjob. She pushes her head forward, shoving the penis completely inside her mouth, the penis enters her mouth till her lips reaching the end. She is doing a deep throat blowjob. She moves her head extremely fast to increase the sexual gratification, "
@@ -479,20 +457,61 @@
       "title": "Positive Prompt"
     }
   },
-  "965:898": {
+  "977:972": {
     "inputs": {
-      "samples": [
-        "965:895",
-        0
-      ],
-      "vae": [
-        "225",
+      "model_name": "2xLiveActionV1_SPAN_490000.pth"
+    },
+    "class_type": "UpscaleModelLoader",
+    "_meta": {
+      "title": "Load Upscale Model"
+    }
+  },
+  "965:980": {
+    "inputs": {
+      "value": [
+        "984",
         0
       ]
     },
-    "class_type": "VAEDecode",
+    "class_type": "PrimitiveInt",
     "_meta": {
-      "title": "Decode Pass 1"
+      "title": "seed"
+    }
+  },
+  "964:981": {
+    "inputs": {
+      "value": [
+        "984",
+        0
+      ]
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "Int"
+    }
+  },
+  "963:982": {
+    "inputs": {
+      "value": [
+        "984",
+        0
+      ]
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "Int"
+    }
+  },
+  "962:983": {
+    "inputs": {
+      "value": [
+        "984",
+        0
+      ]
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "Int"
     }
   },
   "965:893": {
@@ -563,18 +582,6 @@
     "class_type": "KSamplerAdvanced",
     "_meta": {
       "title": "Pass 1 - 1. just SVI"
-    }
-  },
-  "965:980": {
-    "inputs": {
-      "value": [
-        "984",
-        0
-      ]
-    },
-    "class_type": "PrimitiveInt",
-    "_meta": {
-      "title": "seed"
     }
   },
   "965:894": {
@@ -664,6 +671,51 @@
       "title": "Pass 1 - 3. SVI lightning low"
     }
   },
+  "965:898": {
+    "inputs": {
+      "samples": [
+        "965:895",
+        0
+      ],
+      "vae": [
+        "225",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "Decode Pass 1"
+    }
+  },
+  "964:903": {
+    "inputs": {
+      "length": [
+        "966",
+        0
+      ],
+      "motion_latent_count": 1,
+      "positive": [
+        "993",
+        0
+      ],
+      "negative": [
+        "892",
+        0
+      ],
+      "anchor_samples": [
+        "896",
+        0
+      ],
+      "prev_samples": [
+        "965:895",
+        0
+      ]
+    },
+    "class_type": "WanImageToVideoSVIPro",
+    "_meta": {
+      "title": "Pass 2 SVI latent"
+    }
+  },
   "964:902": {
     "inputs": {
       "add_noise": "enable",
@@ -707,47 +759,6 @@
     "class_type": "KSamplerAdvanced",
     "_meta": {
       "title": "Pass 2 - 1. just SVI"
-    }
-  },
-  "964:903": {
-    "inputs": {
-      "length": [
-        "966",
-        0
-      ],
-      "motion_latent_count": 1,
-      "positive": [
-        "993",
-        0
-      ],
-      "negative": [
-        "892",
-        0
-      ],
-      "anchor_samples": [
-        "896",
-        0
-      ],
-      "prev_samples": [
-        "965:895",
-        0
-      ]
-    },
-    "class_type": "WanImageToVideoSVIPro",
-    "_meta": {
-      "title": "Pass 2 SVI latent"
-    }
-  },
-  "964:981": {
-    "inputs": {
-      "value": [
-        "984",
-        0
-      ]
-    },
-    "class_type": "PrimitiveInt",
-    "_meta": {
-      "title": "Int"
     }
   },
   "964:907": {
@@ -795,22 +806,6 @@
       "title": "Pass 2 - 2. SVI lightning high"
     }
   },
-  "964:913": {
-    "inputs": {
-      "samples": [
-        "964:908",
-        0
-      ],
-      "vae": [
-        "225",
-        0
-      ]
-    },
-    "class_type": "VAEDecode",
-    "_meta": {
-      "title": "Decode Pass 2"
-    }
-  },
   "964:908": {
     "inputs": {
       "add_noise": "disable",
@@ -851,6 +846,51 @@
     "class_type": "KSamplerAdvanced",
     "_meta": {
       "title": "Pass 2 - 3. SVI lightning low"
+    }
+  },
+  "964:913": {
+    "inputs": {
+      "samples": [
+        "964:908",
+        0
+      ],
+      "vae": [
+        "225",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "Decode Pass 2"
+    }
+  },
+  "963:914": {
+    "inputs": {
+      "length": [
+        "966",
+        0
+      ],
+      "motion_latent_count": 1,
+      "positive": [
+        "994",
+        0
+      ],
+      "negative": [
+        "892",
+        0
+      ],
+      "anchor_samples": [
+        "896",
+        0
+      ],
+      "prev_samples": [
+        "964:908",
+        0
+      ]
+    },
+    "class_type": "WanImageToVideoSVIPro",
+    "_meta": {
+      "title": "Pass 3 SVI latent"
     }
   },
   "963:915": {
@@ -896,63 +936,6 @@
     "class_type": "KSamplerAdvanced",
     "_meta": {
       "title": "Pass 3 - 1. just SVI"
-    }
-  },
-  "963:918": {
-    "inputs": {
-      "samples": [
-        "963:917",
-        0
-      ],
-      "vae": [
-        "225",
-        0
-      ]
-    },
-    "class_type": "VAEDecode",
-    "_meta": {
-      "title": "Decode Pass 3"
-    }
-  },
-  "963:914": {
-    "inputs": {
-      "length": [
-        "966",
-        0
-      ],
-      "motion_latent_count": 1,
-      "positive": [
-        "994",
-        0
-      ],
-      "negative": [
-        "892",
-        0
-      ],
-      "anchor_samples": [
-        "896",
-        0
-      ],
-      "prev_samples": [
-        "964:908",
-        0
-      ]
-    },
-    "class_type": "WanImageToVideoSVIPro",
-    "_meta": {
-      "title": "Pass 3 SVI latent"
-    }
-  },
-  "963:982": {
-    "inputs": {
-      "value": [
-        "984",
-        0
-      ]
-    },
-    "class_type": "PrimitiveInt",
-    "_meta": {
-      "title": "Int"
     }
   },
   "963:916": {
@@ -1042,6 +1025,51 @@
       "title": "Pass 3 - 3. SVI lightning low"
     }
   },
+  "963:918": {
+    "inputs": {
+      "samples": [
+        "963:917",
+        0
+      ],
+      "vae": [
+        "225",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "Decode Pass 3"
+    }
+  },
+  "962:932": {
+    "inputs": {
+      "length": [
+        "966",
+        0
+      ],
+      "motion_latent_count": 1,
+      "positive": [
+        "995",
+        0
+      ],
+      "negative": [
+        "892",
+        0
+      ],
+      "anchor_samples": [
+        "896",
+        0
+      ],
+      "prev_samples": [
+        "963:917",
+        0
+      ]
+    },
+    "class_type": "WanImageToVideoSVIPro",
+    "_meta": {
+      "title": "Pass 4 SVI latent"
+    }
+  },
   "962:933": {
     "inputs": {
       "add_noise": "enable",
@@ -1085,63 +1113,6 @@
     "class_type": "KSamplerAdvanced",
     "_meta": {
       "title": "Pass 4 - 1. just SVI"
-    }
-  },
-  "962:936": {
-    "inputs": {
-      "samples": [
-        "962:935",
-        0
-      ],
-      "vae": [
-        "225",
-        0
-      ]
-    },
-    "class_type": "VAEDecode",
-    "_meta": {
-      "title": "Decode Pass 4"
-    }
-  },
-  "962:932": {
-    "inputs": {
-      "length": [
-        "966",
-        0
-      ],
-      "motion_latent_count": 1,
-      "positive": [
-        "995",
-        0
-      ],
-      "negative": [
-        "892",
-        0
-      ],
-      "anchor_samples": [
-        "896",
-        0
-      ],
-      "prev_samples": [
-        "963:917",
-        0
-      ]
-    },
-    "class_type": "WanImageToVideoSVIPro",
-    "_meta": {
-      "title": "Pass 4 SVI latent"
-    }
-  },
-  "962:983": {
-    "inputs": {
-      "value": [
-        "984",
-        0
-      ]
-    },
-    "class_type": "PrimitiveInt",
-    "_meta": {
-      "title": "Int"
     }
   },
   "962:934": {
@@ -1231,13 +1202,20 @@
       "title": "Pass 4 - 3. SVI lightning low"
     }
   },
-  "977:972": {
+  "962:936": {
     "inputs": {
-      "model_name": "2xLiveActionV1_SPAN_490000.pth"
+      "samples": [
+        "962:935",
+        0
+      ],
+      "vae": [
+        "225",
+        0
+      ]
     },
-    "class_type": "UpscaleModelLoader",
+    "class_type": "VAEDecode",
     "_meta": {
-      "title": "Load Upscale Model"
+      "title": "Decode Pass 4"
     }
   },
   "977:975": {
