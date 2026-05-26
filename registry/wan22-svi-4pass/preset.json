@@ -17,13 +17,25 @@
     {
       "name": "4-pass MoreMotion",
       "url": "https://raw.githubusercontent.com/Hearmeman24/blockflow-presets/main/registry/wan22-svi-4pass/workflow.json",
-      "sha256": "4148e7fdfc8faf40ff2410f1c03c294e68a50b36c9d0a8021ea67b70393fdf49",
+      "sha256": "40217662de811bd657cb70bdc6e52e8f07933acb129db2f19f48686a0a5815f1",
       "hidden_nodes": [
         "881", "882", "883", "884",
         "965:894", "965:895", "965:901",
         "964:902", "964:907", "964:908",
         "963:915", "963:916", "963:917",
         "962:933", "962:934", "962:935"
+      ],
+      "settings": [
+        {
+          "node_id": "966",
+          "field": "value",
+          "label": "Segment Length (frames)",
+          "type": "int",
+          "min": 5,
+          "max": 241,
+          "step": 4,
+          "description": "Per-segment frame count for SVI chaining. Frame counts must satisfy 4n+1 (e.g. 33, 65, 81, 121, 161). Higher = longer single segment, more VRAM. Default 65."
+        }
       ]
     }
   ],
