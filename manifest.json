@@ -2,6 +2,22 @@
   "manifest_version": 1,
   "presets": [
     {
+      "id": "gbrx-mop-pro",
+      "name": "GBRX - MoP Pro",
+      "description": "SDXL base + refiner (MoP Pro v2.1) with a Z-Image GonzaloMoZpop refinement pass on top. Three-stage chain: MoP main \u2192 MoP refiner \u2192 Z-Image refiner, sharing prompts across SDXL and Z-Image text encoders. ~29 GB on disk.",
+      "comfygen_min_version": "0.2.0",
+      "tags": [
+        "t2i",
+        "image",
+        "sdxl",
+        "z-image",
+        "refiner",
+        "civitai"
+      ],
+      "disk_size_estimate_gb": 32,
+      "preset_url": "https://raw.githubusercontent.com/Hearmeman24/blockflow-presets/main/registry/gbrx-mop-pro/preset.json"
+    },
+    {
       "id": "hidream-o1",
       "name": "HiDream O1 Image",
       "description": "HiDream Labs' O1 image model \u2014 single-file ComfyUI repack from Comfy-Org. Ships two workflows: Image Gen (text-to-image) and Image Edit (reference-image-driven editing). Both use the same BF16 base checkpoint (~15 GB) with text encoder and VAE bundled. ~15 GB on the ComfyGen volume.",
