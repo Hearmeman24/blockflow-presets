@@ -1,0 +1,342 @@
+{
+  "278": {
+    "inputs": {
+      "image": "pasted/image (312).png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "292": {
+    "inputs": {
+      "ckpt_name": "mopPro_v21.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "SDXL Checkpoint"
+    }
+  },
+  "293": {
+    "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "➕ Add Lora": "",
+      "model": [
+        "292",
+        0
+      ],
+      "clip": [
+        "292",
+        1
+      ]
+    },
+    "class_type": "Power Lora Loader (rgthree)",
+    "_meta": {
+      "title": "SDXL Lora Loader"
+    }
+  },
+  "327": {
+    "inputs": {
+      "seed": 397122141680977,
+      "steps": 19,
+      "cfg": 1,
+      "sampler_name": "lcm",
+      "scheduler": "bong_tangent",
+      "denoise": 1,
+      "model": [
+        "293",
+        0
+      ],
+      "positive": [
+        "329",
+        0
+      ],
+      "negative": [
+        "330",
+        0
+      ],
+      "latent_image": [
+        "328",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "MoP Main"
+    }
+  },
+  "328": {
+    "inputs": {
+      "resolution": "832x1216 (0.68)",
+      "batch_size": 1,
+      "width_override": 960,
+      "height_override": 1280
+    },
+    "class_type": "SDXLEmptyLatentSizePicker+",
+    "_meta": {
+      "title": "🔧 Empty Latent Size Picker"
+    }
+  },
+  "329": {
+    "inputs": {
+      "text": "blowjob",
+      "clip": [
+        "293",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "330": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "293",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "331": {
+    "inputs": {
+      "pixels": [
+        "358",
+        0
+      ],
+      "vae": [
+        "292",
+        2
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "332": {
+    "inputs": {
+      "seed": 890534938324835,
+      "steps": 4,
+      "cfg": 1,
+      "sampler_name": "lcm",
+      "scheduler": "ddim_uniform",
+      "denoise": 0.1,
+      "model": [
+        "293",
+        0
+      ],
+      "positive": [
+        "329",
+        0
+      ],
+      "negative": [
+        "330",
+        0
+      ],
+      "latent_image": [
+        "331",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "Mop Refiner"
+    }
+  },
+  "338": {
+    "inputs": {
+      "samples": [
+        "327",
+        0
+      ],
+      "vae": [
+        "292",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "350": {
+    "inputs": {
+      "text": "blowjob",
+      "clip": [
+        "354",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "351": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "354",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "352": {
+    "inputs": {
+      "unet_name": "gonzalomoZpop_v40.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "354": {
+    "inputs": {
+      "clip_name": "qwen_3_4b_fp8_mixed.safetensors",
+      "type": "lumina2",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "355": {
+    "inputs": {
+      "samples": [
+        "359",
+        0
+      ],
+      "vae": [
+        "356",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "356": {
+    "inputs": {
+      "vae_name": "ultrafluxVAEImproved_v10.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "357": {
+    "inputs": {
+      "images": [
+        "355",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  },
+  "358": {
+    "inputs": {
+      "width": [
+        "328",
+        1
+      ],
+      "height": [
+        "328",
+        2
+      ],
+      "upscale_method": "nearest-exact",
+      "keep_proportion": "resize",
+      "pad_color": "0, 0, 0",
+      "crop_position": "center",
+      "divisible_by": 16,
+      "device": "cpu",
+      "image": [
+        "338",
+        0
+      ]
+    },
+    "class_type": "ImageResizeKJv2",
+    "_meta": {
+      "title": "Resize Image v2"
+    }
+  },
+  "359": {
+    "inputs": {
+      "seed": 627973224538994,
+      "steps": 7,
+      "cfg": 1,
+      "sampler_name": "sa_solver",
+      "scheduler": "beta",
+      "denoise": 0.15,
+      "model": [
+        "352",
+        0
+      ],
+      "positive": [
+        "350",
+        0
+      ],
+      "negative": [
+        "351",
+        0
+      ],
+      "latent_image": [
+        "361",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "360": {
+    "inputs": {
+      "samples": [
+        "332",
+        0
+      ],
+      "vae": [
+        "292",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "361": {
+    "inputs": {
+      "pixels": [
+        "360",
+        0
+      ],
+      "vae": [
+        "356",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  }
+}

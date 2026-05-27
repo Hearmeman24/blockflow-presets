@@ -1,0 +1,52 @@
+{
+  "id": "gbrx-mop-pro",
+  "name": "GBRX - MoP Pro",
+  "description": "SDXL base + refiner (MoP Pro v2.1) with a Z-Image GonzaloMoZpop refinement pass on top. Three-stage chain: MoP main → MoP refiner → Z-Image refiner, sharing prompts across SDXL and Z-Image text encoders. ~29 GB on disk.",
+  "comfygen_min_version": "0.2.0",
+  "tags": [
+    "t2i",
+    "image",
+    "sdxl",
+    "z-image",
+    "refiner",
+    "civitai"
+  ],
+  "workflows": [
+    {
+      "name": "MoP Pro + Z-Image Refine",
+      "url": "https://raw.githubusercontent.com/Hearmeman24/blockflow-presets/main/registry/gbrx-mop-pro/workflow.json",
+      "sha256": "4c27726f88ad658e64d30eed04e37c6f9eb037359fae6cb1b5a7737e9f4f61d9"
+    }
+  ],
+  "models": [
+    {
+      "source": "civitai",
+      "url": "https://civitai.com/api/download/models/2960578",
+      "dest": "checkpoints/mopPro_v21.safetensors",
+      "sha256": "3bccd07908fcc2fd0cb9be1ac17ea1c62a7afb0bc04527ecfbb1862aa158d925",
+      "size_gb": 6.46
+    },
+    {
+      "source": "civitai",
+      "url": "https://civitai.com/api/download/models/2932204",
+      "dest": "diffusion_models/gonzalomoZpop_v40.safetensors",
+      "sha256": "bc690a3eb50d1eaac1dc299f25b367d9a4efc8a2c9c5ce0d2bdf9c7bd65db909",
+      "size_gb": 16.87
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/text_encoders/qwen_3_4b_fp8_mixed.safetensors",
+      "dest": "text_encoders/qwen_3_4b_fp8_mixed.safetensors",
+      "sha256": "72450b19758172c5a7273cf7de729d1c17e7f434a104a00167624cba94f68f15",
+      "size_gb": 5.244
+    },
+    {
+      "source": "huggingface",
+      "url": "https://huggingface.co/LoneWolfVPS/TIZ_TESTING/resolve/main/ultrafluxVAEImproved_v10.safetensors",
+      "dest": "vae/ultrafluxVAEImproved_v10.safetensors",
+      "sha256": "2bf9ad685686b480b03651a8d8595951e4a5578016b8ead4af5e22d3dc9b3409",
+      "size_gb": 0.312
+    }
+  ],
+  "disk_size_estimate_gb": 32
+}
