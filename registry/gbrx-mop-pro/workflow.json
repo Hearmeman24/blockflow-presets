@@ -1,13 +1,4 @@
 {
-  "278": {
-    "inputs": {
-      "image": "pasted/image (312).png"
-    },
-    "class_type": "LoadImage",
-    "_meta": {
-      "title": "Load Image"
-    }
-  },
   "292": {
     "inputs": {
       "ckpt_name": "mopPro_v21.safetensors"
