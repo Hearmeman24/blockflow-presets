@@ -230,18 +230,6 @@
       "title": "Load VAE"
     }
   },
-  "357": {
-    "inputs": {
-      "images": [
-        "355",
-        0
-      ]
-    },
-    "class_type": "PreviewImage",
-    "_meta": {
-      "title": "Preview Image"
-    }
-  },
   "358": {
     "inputs": {
       "width": [
@@ -328,6 +316,19 @@
     "class_type": "VAEEncode",
     "_meta": {
       "title": "VAE Encode"
+    }
+  },
+  "362": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "355",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
     }
   }
 }
