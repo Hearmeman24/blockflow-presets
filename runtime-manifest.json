@@ -1,0 +1,14 @@
+{
+  "manifest_version": 1,
+  "comfygen_serverless": {
+    "channel": "stable",
+    "image": "hearmeman/comfyui-serverless:v24",
+    "tag": "v24",
+    "comfyui_sha": "d80fcafee78a9453e89c21da41ecc815ad69a116",
+    "required_classes": [
+      "ModelNoiseScale",
+      "EmptyHiDreamO1LatentImage",
+      "HiDreamO1PatchSeamSmoothing"
+    ]
+  }
+}
