@@ -572,6 +572,10 @@
       "images": [
         "481",
         0
+      ],
+      "audio": [
+        "417",
+        2
       ]
     },
     "class_type": "VHS_VideoCombine",

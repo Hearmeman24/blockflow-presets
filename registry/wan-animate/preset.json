@@ -17,7 +17,7 @@
     {
       "name": "Keep Background",
       "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/wan-animate/workflow_keep_background.json",
-      "sha256": "b4663315789a0460f4d4029424333ea2d894f8219ef5aaba5db72f360ac962b1",
+      "sha256": "e608da01d50b962bb5d3ba6954bd252afea710b2855e4ca9deca0999c2fb55da",
       "smoke_inputs": [
         {
           "node_id": "311",
@@ -38,12 +38,12 @@
     {
       "name": "Replace Character",
       "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/wan-animate/workflow_replace_character.json",
-      "sha256": "9560314a867b30bd1670475ea6a59b607af4e6d6d43998bdfefe110b5b7341b2"
+      "sha256": "d3c05e249f346e197ffde82b81ec48dd0070b0e393ddd8f5208e89ff122ab92b"
     },
     {
       "name": "Replace Face",
       "url": "https://github.com/Hearmeman24/blockflow-presets/raw/main/registry/wan-animate/workflow_replace_face.json",
-      "sha256": "bc52fd9b5bdbc2f0e98428959b18f53ecc15e7305fe30db812393dbb165e0117",
+      "sha256": "a6fb393bb5f06b67e2aea8d8e2bfad06ceb7cbc3a9b0f580577b43e94276b577",
       "settings": [
         {
           "node_id": "554",
