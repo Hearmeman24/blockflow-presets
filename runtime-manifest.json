@@ -2,8 +2,9 @@
   "manifest_version": 1,
   "comfygen_serverless": {
     "channel": "stable",
-    "image": "hearmeman/comfyui-serverless:v25",
-    "tag": "v25",
+    "image": "hearmeman/comfyui-serverless:v27",
+    "tag": "v27",
+    "min_cuda_version": "13.0",
     "comfyui_sha": "4f99ce0f8c77e8de7318da1b70d745e55ece6022",
     "required_classes": [
       "ModelNoiseScale",
