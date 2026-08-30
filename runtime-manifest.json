@@ -2,9 +2,9 @@
   "manifest_version": 1,
   "comfygen_serverless": {
     "channel": "stable",
-    "image": "hearmeman/comfyui-serverless:v33",
-    "tag": "v33",
-    "comfyui_sha": "0f949d0fafbd86f2494459a5bf89d9329775e199",
+    "image": "hearmeman/comfyui-serverless:v35",
+    "tag": "v35",
+    "base_image": "hearmeman/comfyui-base:cu130-comfy0.32.0-torch2.11.0",
     "required_classes": [
       "ModelNoiseScale",
       "EmptyHiDreamO1LatentImage",
